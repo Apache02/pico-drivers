@@ -3,7 +3,7 @@
 #include "pico/time.h"
 #include "pico/binary_info.h"
 #include "drivers/led/led.h"
-#include "drivers/ws2812/circle_12.h"
+#include "drivers/ws2812/Circle12.h"
 
 // board config
 #define LED_PIN PICO_DEFAULT_LED_PIN
