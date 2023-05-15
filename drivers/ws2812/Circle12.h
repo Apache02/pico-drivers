@@ -2,7 +2,6 @@
 #define DRIVERS_WS2812_CIRCLE_12__H
 
 #include "pico/stdlib.h"
-#include "hardware/pio.h"
 #include "PioData.h"
 
 namespace ws2812 {
@@ -13,8 +12,6 @@ namespace ws2812 {
 
     private:
         uint pixels[12];
-        PIO pio;
-        uint sm; // state machine
 
     public:
         Circle12(uint pin, PIO pio = pio0, uint sm = 0) : PioData(pin, pio, sm) {};

@@ -1,5 +1,4 @@
 #include "Circle12.h"
-#include "ws2812.pio.h"
 #include "common.h"
 
 namespace ws2812 {
