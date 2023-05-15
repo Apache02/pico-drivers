@@ -12,4 +12,3 @@ set(PICO_LIB_DRIVERS_PATH ${CMAKE_SOURCE_DIR})
 include(pico_lib_drivers_import.cmake)
 
 add_subdirectory(examples)
-

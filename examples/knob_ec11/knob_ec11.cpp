@@ -101,7 +101,7 @@ int main() {
             } else {
                 led.off();
             }
-            sleep_ms(10);
+            sleep_ms(1);
         }
 
         led.set((uint8_t) led_brightness);

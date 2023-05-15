@@ -1,4 +1,4 @@
-set(NAME knob_ec11.cpp)
+set(NAME "example--knob_ec11")
 add_executable(${NAME}
         knob_ec11.cpp
         )

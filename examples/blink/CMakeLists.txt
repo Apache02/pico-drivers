@@ -1,4 +1,4 @@
-set(NAME blink)
+set(NAME "example--blink")
 add_executable(${NAME}
         blink.cpp
         )
