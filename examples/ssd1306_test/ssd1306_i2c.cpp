@@ -55,6 +55,7 @@ int main() {
                 display.buffer[i] = pattern & 0xFF;
                 display.update();
             }
+            sleep_ms(1000);
         }
     }
 

@@ -39,3 +39,57 @@ void DeviceIO_I2C::chunked_write(const uint8_t control_byte, const uint8_t *data
         i2c_write_blocking(instance, address, message, chunk_length + 1, left_length > chunk_length);
     }
 }
+
+spi_inst_t *DeviceIO_SPI::detect_instance(uint sda_pin, uint scl_pin) {
+    if (sda_pin > 7 && scl_pin > 7 && sda_pin < 16 && scl_pin < 16) {
+        return spi1;
+    }
+    if ((sda_pin <= 7 || sda_pin >= 16) && (scl_pin <= 7 || scl_pin >= 16)) {
+        return spi0;
+    }
+    return nullptr;
+}
+
+void DeviceIO_SPI::init_io(uint baudrate) {
+    spi_init(instance, 10 * 1024 * 1024);
+
+    gpio_set_function(sda, GPIO_FUNC_SPI);
+    gpio_set_function(scl, GPIO_FUNC_SPI);
+    if (cs != -1) {
+        gpio_init(cs);
+        gpio_set_dir(cs, GPIO_OUT);
+        gpio_put(cs, 1);
+    }
+    gpio_init(dc);
+    gpio_set_dir(dc, GPIO_OUT);
+    gpio_put(dc, 0);
+    if (reset != -1) {
+        gpio_init(reset);
+        gpio_set_dir(reset, GPIO_OUT);
+
+        gpio_put(reset, 1);
+        sleep_ms(1);
+        gpio_put(reset, 0);
+        sleep_ms(10);
+        gpio_put(reset, 1);
+    }
+}
+
+void DeviceIO_SPI::command(const uint8_t command) {
+    write_internal(&command, 1, false);
+}
+
+void DeviceIO_SPI::commands(const uint8_t *commands, size_t length) {
+    write_internal(commands, length, false);
+}
+
+void DeviceIO_SPI::write(const uint8_t *data, size_t length) {
+    write_internal(data, length, true);
+}
+
+void DeviceIO_SPI::write_internal(const uint8_t *data, const size_t length, bool is_data) {
+    gpio_put(dc, is_data);
+    gpio_put(cs, 0);
+    spi_write_blocking(instance, data, length);
+    gpio_put(cs, 1);
+}

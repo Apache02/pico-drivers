@@ -58,6 +58,7 @@ void Ssd1306::init() {
     const uint8_t x1 = 0, x2 = width - 1;
     const uint8_t p1 = 0, p2 = (height / 8) - 1;
     const uint8_t y1 = 0, y2 = height - 1;
+    const uint8_t pins_config = height == 32 ? 0x02 : 0x12;
 
     const uint8_t commands[] = {
             SET_DISP_ON_OFF | 0x00,             // Display off.
@@ -68,8 +69,7 @@ void Ssd1306::init() {
             SET_CHARGE_PUMP, 0x14,              // Enable charge pump.
             SET_SEGMENT_REMAP | 0x01,           // Map col addr 127 to SEG0.
             SET_COM_OUTPUT_DIR | 0x08,          // Scan from N-1 to 0. (N=height)
-//            SET_COM_PINS_CONFIG, 0x12,          // Set COM pins hardware configuration to 0x12.
-            SET_COM_PINS_CONFIG, 0x02,          // Set COM pins hardware configuration to 0x12.
+            SET_COM_PINS_CONFIG, pins_config, // Set COM pins hardware configuration.
             SET_CONTRAST, 0xcf,                 // Set contrast to 0xcf
             SET_PRECHARGE_PERIOD, 0xf1,         // Set pre-charge to 0xf1
             SET_VCOM_DESEL_LEVEL, 0x40,         // Set VCOMH deselect to 0x40
