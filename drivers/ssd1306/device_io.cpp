@@ -51,7 +51,7 @@ spi_inst_t *DeviceIO_SPI::detect_instance(uint sda_pin, uint scl_pin) {
 }
 
 void DeviceIO_SPI::init_io(uint baudrate) {
-    spi_init(instance, 10 * 1024 * 1024);
+    spi_init(instance, baudrate);
 
     gpio_set_function(sda, GPIO_FUNC_SPI);
     gpio_set_function(scl, GPIO_FUNC_SPI);
