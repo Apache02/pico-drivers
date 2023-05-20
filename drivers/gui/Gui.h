@@ -47,9 +47,6 @@ public:
     void drawRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
 
     void drawRect(Rect rect);
-
-//    void fillRect(Rect rect, uint32_t color);
 };
-
 
 #endif // LIB_DRIVERS_GUI__H
