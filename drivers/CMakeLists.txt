@@ -1,3 +1,4 @@
+add_subdirectory(console)
 add_subdirectory(gui)
 add_subdirectory(fonts)
 
@@ -21,6 +22,7 @@ target_link_libraries(drivers INTERFACE
         hardware_spi
         hardware_pwm
         hardware_pio
+        drivers_console
         drivers_gui
         drivers_fonts
         )
