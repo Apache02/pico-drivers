@@ -13,7 +13,7 @@ void Gui::drawPixel(int16_t x, int16_t y) {
     buffer[x + (y >> 3) * width] |= 1u << (y & 0b111);
 }
 
-void Gui::drawPixel(Gui::Point p) {
+void Gui::drawPixel(const Gui::Point p) {
     drawPixel(p.x, p.y);
 }
 
@@ -56,7 +56,7 @@ void Gui::drawLine(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
     }
 }
 
-void Gui::drawLine(Gui::Point p1, Gui::Point p2) {
+void Gui::drawLine(const Gui::Point p1, const Gui::Point p2) {
     drawLine(p1.x, p1.y, p2.x, p2.y);
 }
 
@@ -88,7 +88,7 @@ void Gui::drawCircle(int16_t x0, int16_t y0, int16_t r) {
     }
 }
 
-void Gui::drawCircle(Gui::Point center, int16_t r) {
+void Gui::drawCircle(const Gui::Point center, int16_t r) {
     drawCircle(center.x, center.y, r);
 }
 
@@ -121,7 +121,7 @@ void Gui::fillCircle(int16_t x0, int16_t y0, int16_t r) {
     drawCircle(x0, y0, r);
 }
 
-void Gui::fillCircle(Gui::Point center, int16_t r) {
+void Gui::fillCircle(const Gui::Point center, int16_t r) {
     fillCircle(center.x, center.y, r);
 }
 
@@ -132,7 +132,96 @@ void Gui::drawRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
     drawLine(x2, y1, x2, y2);
 }
 
-void Gui::drawRect(Gui::Rect rect) {
+void Gui::drawRect(const Point p1, const Point p2) {
+    drawRect(p1.x, p1.y, p2.x, p2.y);
+}
+
+void Gui::drawRect(const Gui::Rect rect) {
     drawRect(rect.x1, rect.y1, rect.x2, rect.y2);
+}
+
+void Gui::setFont(const FONT_DEF *set_font) {
+    font = set_font;
+}
+
+void Gui::drawGlyph(const wchar_t c, int16_t x0, int16_t y0) {
+    if (!font) return;
+    if (c < font->first || c > font->last) return;
+
+    const uint8_t *glyph_buffer = font->buffer + (font->height * (c - font->first));
+
+    for (unsigned int y = 0; y < font->height; y++) {
+        for (unsigned int x = 0; x < font->width; x++) {
+            if (glyph_buffer[y] & (1u << x)) {
+                drawPixel(x0 + x, y0 + y);
+            }
+        }
+    }
+}
+
+void Gui::drawGlyph(const wchar_t c, const Gui::Point p) {
+    drawGlyph(c, p.x, p.y);
+}
+
+Gui::Point Gui::calcTextSize(const char *text, int16_t space) {
+    if (!font) return {0, 0};
+
+    int16_t x = 0, x_max = 0;
+    int16_t y = 0;
+
+    for (; *text != '\0'; text++) {
+        if (*text == '\n') {
+            x = 0;
+            continue;
+        }
+        if (x == 0) {
+            if (y > 0) {
+                y += space;
+            }
+            y += font->height;
+        } else if (x > 0) {
+            x += space;
+        }
+        x += font->width;
+
+        if (x > x_max) {
+            x_max = x;
+        }
+    }
+
+    return {x_max, y};
+}
+
+void Gui::drawText(const char *text, int16_t space, const Gui::Rect rect, Gui::Align align) {
+    if (!font) return;
+
+    Point size = calcTextSize(text, space);
+    int16_t x = rect.x1;
+    int16_t y = rect.y1;
+
+    if (align & Align::RIGHT) {
+        x += rect.x2 - size.x;
+    } else if (align & Align::CENTER) {
+        x += (rect.x2 - size.x) / 2;
+    }
+
+    if (align & Align::BOTTOM) {
+        y += rect.y2 - size.y;
+    } else if (align & Align::MIDDLE) {
+        y += (rect.y2 - size.y) / 2;
+    }
+
+    for (const char *tmp = text; *tmp != '\0'; tmp++) {
+        wchar_t c = *tmp;
+        if (c == '\n') {
+            x = 0;
+            y += font->height + space;
+            continue;
+        }
+
+        drawGlyph(c, x, y);
+        x += font->width + space;
+    }
+
 }
 
