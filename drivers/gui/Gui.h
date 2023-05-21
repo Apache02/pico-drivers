@@ -68,9 +68,11 @@ public:
 
     void drawGlyph(const wchar_t c, const Point p);
 
-    Point calcTextSize(const char *text, int16_t space = 0);
+    Point calcTextSize(const char *text, int16_t xspace = 0, int16_t yspace = 0);
 
-    void drawText(const char *text, int16_t space, const Rect rect, Align align = Align::LEFT);
+    void drawText(const char *text, const Rect rect, int16_t xspace, int16_t yspace, Align align = Align::LEFT);
+
+    void drawText(const char *text, const Rect rect, int16_t space, Align align = Align::LEFT);
 };
 
 #endif // LIB_DRIVERS_GUI__H

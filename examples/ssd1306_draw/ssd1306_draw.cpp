@@ -70,7 +70,7 @@ void test_drawLines(Ssd1306 *d, Gui *gui) {
     gui->fill(0);
     for (auto i = 0; i < 10; i++) {
         Gui::Point p1 = {int16_t(rand() & (d->width - 1) - 16), int16_t(rand() & (d->height - 1) - 16)};
-        Gui::Point p2 = {int16_t(rand() & (d->width - 1) - 16), int16_t(rand() & (d->height - 1) - 16)};
+        Gui::Point p2 = {int16_t(rand() & (d->width - 1) + 16), int16_t(rand() & (d->height - 1) + 16)};
         gui->drawLine(p1, p2);
         d->update();
         sleep_ms(100);
@@ -84,7 +84,7 @@ void test_drawRects(Ssd1306 *d, Gui *gui) {
     for (auto i = 0; i < 10; i++) {
         Gui::Rect r = {
                 int16_t(rand() & (d->width - 1) - 16), int16_t(rand() & (d->height - 1) - 16),
-                int16_t(rand() & (d->width - 1) - 16), int16_t(rand() & (d->height - 1) - 16)
+                int16_t(rand() & (d->width - 1) + 16), int16_t(rand() & (d->height - 1) + 16)
         };
         gui->drawRect(r);
         d->update();
@@ -154,8 +154,8 @@ void test_drawText(Ssd1306 *d, Gui *gui) {
         gui->drawRect(0, 0, d->width - 1, d->height - 1);
         gui->drawText(
                 example.text,
-                1,
                 {1, 1, int16_t(d->width - 2), int16_t(d->height - 2)},
+                0, 1,
                 Gui::Align(example.align)
         );
         d->update();
