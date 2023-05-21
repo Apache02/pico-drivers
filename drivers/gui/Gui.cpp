@@ -126,10 +126,31 @@ void Gui::fillCircle(const Gui::Point center, int16_t r) {
 }
 
 void Gui::drawRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
-    drawLine(x1, y1, x2, y1);
-    drawLine(x1, y2, x2, y2);
-    drawLine(x1, y1, x1, y2);
-    drawLine(x2, y1, x2, y2);
+    int x, xm, y, ym;
+
+    if (x1 > x2) {
+        x = x2;
+        xm = x1;
+    } else {
+        x = x1;
+        xm = x2;
+    }
+    if (y1 > y2) {
+        y = y2;
+        ym = y1;
+    } else {
+        y = y1;
+        ym = y2;
+    }
+
+    for (; x <= xm; x++) {
+        drawPixel(x, y1);
+        drawPixel(x, y2);
+    }
+    for (; y <= ym; y++) {
+        drawPixel(x1, y);
+        drawPixel(x2, y);
+    }
 }
 
 void Gui::drawRect(const Point p1, const Point p2) {
@@ -138,6 +159,39 @@ void Gui::drawRect(const Point p1, const Point p2) {
 
 void Gui::drawRect(const Gui::Rect rect) {
     drawRect(rect.x1, rect.y1, rect.x2, rect.y2);
+}
+
+void Gui::fillRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
+    int x, xm, y0, ym;
+
+    if (x1 > x2) {
+        x = x2;
+        xm = x1;
+    } else {
+        x = x1;
+        xm = x2;
+    }
+    if (y1 > y2) {
+        y0 = y2;
+        ym = y1;
+    } else {
+        y0 = y1;
+        ym = y2;
+    }
+
+    for (; x <= xm; x++) {
+        for (auto y = y0; y <= ym; y++) {
+            drawPixel(x, y);
+        }
+    }
+}
+
+void Gui::fillRect(const Point p1, const Point p2) {
+    fillRect(p1.x, p1.y, p2.x, p2.y);
+}
+
+void Gui::fillRect(const Gui::Rect rect) {
+    fillRect(rect.x1, rect.y1, rect.x2, rect.y2);
 }
 
 void Gui::setFont(const FONT_DEF *set_font) {

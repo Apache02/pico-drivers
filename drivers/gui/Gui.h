@@ -63,6 +63,12 @@ public:
 
     void drawRect(const Rect rect);
 
+    void fillRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+
+    void fillRect(const Point p1, const Point p2);
+
+    void fillRect(const Rect rect);
+
     void setFont(const FONT_DEF *font);
 
     void drawGlyph(const wchar_t c, int16_t x, int16_t y);

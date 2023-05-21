@@ -86,7 +86,11 @@ void test_drawRects(Ssd1306 *d, Gui *gui) {
                 int16_t(rand() & (d->width - 1) - 16), int16_t(rand() & (d->height - 1) - 16),
                 int16_t(rand() & (d->width - 1) + 16), int16_t(rand() & (d->height - 1) + 16)
         };
-        gui->drawRect(r);
+        if (rand() & 1) {
+            gui->drawRect(r);
+        } else {
+            gui->fillRect(r);
+        }
         d->update();
         sleep_ms(100);
     }
