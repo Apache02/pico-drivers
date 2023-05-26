@@ -136,22 +136,22 @@ void test_drawText(Ssd1306 *d, Gui *gui) {
     } examples[] = {
             {"[ 0 ]",           0},
 
-            {"LEFT",            Gui::Align::LEFT},
-            {"CENTER",          Gui::Align::CENTER},
-            {"RIGHT",           Gui::Align::RIGHT},
-            {"TOP",             Gui::Align::TOP},
-            {"MIDDLE",          Gui::Align::MIDDLE},
-            {"BOTTOM",          Gui::Align::BOTTOM},
+            {"LEFT",            Gui::LEFT},
+            {"CENTER",          Gui::CENTER},
+            {"RIGHT",           Gui::RIGHT},
+            {"TOP",             Gui::TOP},
+            {"MIDDLE",          Gui::MIDDLE},
+            {"BOTTOM",          Gui::BOTTOM},
 
-            {"LEFT | TOP",      Gui::Align::LEFT | Gui::Align::TOP},
-            {"CENTER | TOP",    Gui::Align::CENTER | Gui::Align::TOP},
-            {"RIGHT | TOP",     Gui::Align::RIGHT | Gui::Align::TOP},
-            {"LEFT | MIDDLE",   Gui::Align::LEFT | Gui::Align::MIDDLE},
-            {"CENTER | MIDDLE", Gui::Align::CENTER | Gui::Align::MIDDLE},
-            {"RIGHT | MIDDLE",  Gui::Align::RIGHT | Gui::Align::MIDDLE},
-            {"LEFT | BOTTOM",   Gui::Align::LEFT | Gui::Align::BOTTOM},
-            {"CENTER | BOTTOM", Gui::Align::CENTER | Gui::Align::BOTTOM},
-            {"RIGHT | BOTTOM",  Gui::Align::RIGHT | Gui::Align::BOTTOM},
+            {"LEFT | TOP",      Gui::LEFT | Gui::TOP},
+            {"CENTER | TOP",    Gui::CENTER | Gui::TOP},
+            {"RIGHT | TOP",     Gui::RIGHT | Gui::TOP},
+            {"LEFT | MIDDLE",   Gui::LEFT | Gui::MIDDLE},
+            {"CENTER | MIDDLE", Gui::CENTER | Gui::MIDDLE},
+            {"RIGHT | MIDDLE",  Gui::RIGHT | Gui::MIDDLE},
+            {"LEFT | BOTTOM",   Gui::LEFT | Gui::BOTTOM},
+            {"CENTER | BOTTOM", Gui::CENTER | Gui::BOTTOM},
+            {"RIGHT | BOTTOM",  Gui::RIGHT | Gui::BOTTOM},
     };
     for (auto example: examples) {
         gui->fill(0);
@@ -160,7 +160,7 @@ void test_drawText(Ssd1306 *d, Gui *gui) {
                 example.text,
                 {1, 1, int16_t(d->width - 2), int16_t(d->height - 2)},
                 0, 1,
-                Gui::Align(example.align)
+                example.align
         );
         d->update();
         sleep_ms(1000);

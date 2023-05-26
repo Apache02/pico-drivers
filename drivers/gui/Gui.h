@@ -19,7 +19,7 @@ public:
         int16_t y2;
     } Rect;
 
-    typedef enum {
+    enum {
         LEFT = 0b0000,
         RIGHT = 0b0001,
         CENTER = 0b0010,
@@ -27,7 +27,9 @@ public:
         TOP = 0b0000,
         BOTTOM = 0b0100,
         MIDDLE = 0b1000,
-    } Align;
+    } Align_enum;
+
+    typedef unsigned char Align;
 
     const uint16_t width;
     const uint16_t height;
@@ -40,6 +42,8 @@ public:
     Gui(uint8_t *buffer, uint16_t width, uint16_t height) : buffer(buffer), width(width), height(height) {};
 
     void fill(uint32_t color);
+
+    void invert();
 
     void drawPixel(int16_t x, int16_t y);
 
@@ -77,9 +81,9 @@ public:
 
     Point calcTextSize(const char *text, int16_t xspace = 0, int16_t yspace = 0);
 
-    void drawText(const char *text, const Rect rect, int16_t xspace, int16_t yspace, Align align = Align::LEFT);
+    void drawText(const char *text, const Rect rect, int16_t xspace, int16_t yspace, Align align = LEFT);
 
-    void drawText(const char *text, const Rect rect, int16_t space, Align align = Align::LEFT);
+    void drawText(const char *text, const Rect rect, int16_t space, Align align = LEFT);
 };
 
 #endif // LIB_DRIVERS_GUI__H

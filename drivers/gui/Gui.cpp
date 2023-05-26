@@ -1,8 +1,17 @@
 #include "Gui.h"
 #include <string.h>
 
+#define BUFFER_SIZE(w, h) (w * ((h + 0b111) >> 3))
+
 void Gui::fill(uint32_t color) {
-    memset(buffer, color ? 0xFF : 0x00, width * (height >> 3));
+    memset(buffer, color ? 0xFF : 0x00, BUFFER_SIZE(width, height));
+}
+
+void Gui::invert() {
+    auto bufferSize = BUFFER_SIZE(width, height);
+    for (auto i = 0; i < bufferSize; i++) {
+        buffer[i] ^= 0xFF;
+    }
 }
 
 void Gui::drawPixel(int16_t x, int16_t y) {
@@ -253,16 +262,16 @@ void Gui::drawText(const char *text, const Rect rect, int16_t xspace, int16_t ys
     int16_t x = rect.x1;
     int16_t y = rect.y1;
 
-    if (align & Align::RIGHT) {
+    if (align & RIGHT) {
         x += rect.x2 - size.x;
-    } else if (align & Align::CENTER) {
-        x += (rect.x2 - size.x) / 2;
+    } else if (align & CENTER) {
+        x += (rect.x2 - rect.x1 - size.x) / 2;
     }
 
-    if (align & Align::BOTTOM) {
+    if (align & BOTTOM) {
         y += rect.y2 - size.y;
-    } else if (align & Align::MIDDLE) {
-        y += (rect.y2 - size.y) / 2;
+    } else if (align & MIDDLE) {
+        y += (rect.y2 - rect.y1 - size.y) / 2;
     }
 
     for (const char *tmp = text; *tmp != '\0'; tmp++) {
@@ -282,4 +291,3 @@ void Gui::drawText(const char *text, const Rect rect, int16_t xspace, int16_t ys
 void Gui::drawText(const char *text, const Gui::Rect rect, int16_t space, Gui::Align align) {
     drawText(text, rect, space, space, align);
 }
-

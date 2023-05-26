@@ -1,5 +1,5 @@
-#ifndef DRIVERS_DISPLAY_IO__H
-#define DRIVERS_DISPLAY_IO__H
+#ifndef DRIVERS_SSD1306_DEVICE_IO__H
+#define DRIVERS_SSD1306_DEVICE_IO__H
 
 #include <stdlib.h>
 #include "pico/stdlib.h"
@@ -95,4 +95,4 @@ public:
     void write(const uint8_t *data, size_t length) override;
 };
 
-#endif // DRIVERS_DISPLAY_IO__H
+#endif // DRIVERS_SSD1306_DEVICE_IO__H
