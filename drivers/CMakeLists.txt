@@ -14,6 +14,8 @@ target_sources(drivers INTERFACE
         ${CMAKE_CURRENT_LIST_DIR}/ws2812/Circle12.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ssd1306/device_io.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ssd1306/Ssd1306.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ssd1680/io.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ssd1680/Ssd1680.cpp
         )
 
 target_link_libraries(drivers INTERFACE
