@@ -211,11 +211,14 @@ void Gui::drawGlyph(const wchar_t c, int16_t x0, int16_t y0) {
     if (!font) return;
     if (c < font->first || c > font->last) return;
 
-    const uint8_t *glyph_buffer = font->buffer + (font->height * (c - font->first));
+    const uint8_t index = (c - font->first);
+    const uint8_t w = (font->width + 0b0111) >> 3;
+    const uint8_t h = font->height;
+    const uint8_t *glyph_buffer = font->buffer + (w * h * index);
 
     for (unsigned int y = 0; y < font->height; y++) {
         for (unsigned int x = 0; x < font->width; x++) {
-            if (glyph_buffer[y] & (1u << x)) {
+            if (glyph_buffer[y * w + (x >> 3)] & (1u << (x & 0b111))) {
                 drawPixel(x0 + x, y0 + y);
             }
         }

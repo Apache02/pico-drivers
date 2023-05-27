@@ -15,6 +15,7 @@ FLASH_TARGET="/media/$USER/RPI-RP2"
 
 echo "  uf2 file: $UF2_FILE"
 echo "  target: $FLASH_TARGET"
+stat $UF2_FILE -c "  size: %s"
 
 while [ ! -d /media/$USER/RPI-RP2 ]; do sleep .25; done
 
