@@ -97,11 +97,23 @@ void test_drawRects(Ssd1306 *d, Gui *gui) {
     printf("%s END\n", __PRETTY_FUNCTION__);
 }
 
-void test_drawGlyphs(Ssd1306 *d, Gui *gui) {
+void test_drawGlyphs(Ssd1306 *d, Gui *gui, const FONT_DEF *font, const char *fontName = nullptr) {
     printf("%s START\n", __PRETTY_FUNCTION__);
-    gui->fill(0);
-    const auto *font = &font_5x8;
     gui->setFont(font);
+
+    if (fontName) {
+        gui->fill(0);
+        gui->drawText(
+                fontName,
+                {0, 0, int16_t(gui->width - 1), int16_t(gui->height - 1)},
+                0,
+                Gui::Align(Gui::CENTER | Gui::MIDDLE)
+        );
+        d->update();
+        sleep_ms(2000);
+    }
+
+    gui->fill(0);
     Gui::Point p = {0, 0};
     int16_t space = 1;
     for (wchar_t c = font->first; c <= font->last; c++) {
@@ -115,7 +127,7 @@ void test_drawGlyphs(Ssd1306 *d, Gui *gui) {
             p.x = 0;
 
             if (p.y + font->height > d->height) {
-                sleep_ms(1000);
+                sleep_ms(2000);
                 p.x = 0;
                 p.y = 0;
                 gui->fill(0);
@@ -125,11 +137,10 @@ void test_drawGlyphs(Ssd1306 *d, Gui *gui) {
     printf("%s END\n", __PRETTY_FUNCTION__);
 }
 
-void test_drawText(Ssd1306 *d, Gui *gui) {
+void test_drawText(Ssd1306 *d, Gui *gui, const FONT_DEF *font) {
     printf("%s START\n", __PRETTY_FUNCTION__);
     gui->fill(0);
-    const auto *font_2 = &font_5x8;
-    gui->setFont(font_2);
+    gui->setFont(font);
     const struct {
         const char *text;
         uint align;
@@ -202,6 +213,19 @@ int main() {
 #endif
     };
 
+    struct _FONT {
+        const FONT_DEF *ptr;
+        const char *name;
+    } fonts[] = {
+//            {&font_5x8, "font_5x8"},
+            {&font_6x8_basic, "font_6x8_basic"},
+            {&font_6x8, "font_6x8"},
+            {&font_6x10, "font_6x10"},
+//            {&font_10x16, "font_10x16"},
+            {&font_12x16, "font_12x16"},
+//            {&font_12x20, "font_12x20"},
+    };
+
     for (;;) {
 #if defined(DRAW_CIRCLES)
         for (auto display: displays) {
@@ -225,15 +249,17 @@ int main() {
 #endif
 
 #if defined(DRAW_GLYPHS)
-        for (auto display: displays) {
-            test_drawGlyphs(display.display, display.gui);
+        for (auto font: fonts) {
+            for (auto display: displays) {
+                test_drawGlyphs(display.display, display.gui, font.ptr, font.name);
+            }
+            sleep_ms(1000);
         }
-        sleep_ms(1000);
 #endif
 
 #if defined(DRAW_TEXT)
         for (auto display: displays) {
-            test_drawText(display.display, display.gui);
+            test_drawText(display.display, display.gui, fonts[0].ptr);
         }
         sleep_ms(1000);
 #endif
