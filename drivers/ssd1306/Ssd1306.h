@@ -2,7 +2,7 @@
 #define DRIVERS_SSD1306__H
 
 #include "pico/stdlib.h"
-#include "device_io.h"
+#include "io.h"
 
 #define SSD1306_DEFAULT_I2C_ADDRESS 0x3C
 
