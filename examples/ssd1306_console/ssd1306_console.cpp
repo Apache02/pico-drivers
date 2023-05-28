@@ -103,9 +103,8 @@ int main() {
             char tmp[16];
             console->print("\n");
             for (auto i = 0; i <= 100; i++) {
-                sprintf(tmp, "%d%% ", i);
                 console->clearLine();
-                console->print(tmp);
+                console->printf("%d%% ", i);
                 for (auto j = 0; j < ((i >> 1) % 4); j++) {
                     console->print(".");
                 }

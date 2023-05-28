@@ -26,6 +26,8 @@ public:
 
     void print(const char *text);
 
+    int printf(const char *format, ...);
+
     void printChar(const char c);
 
     void printLine(const char *text);

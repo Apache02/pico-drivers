@@ -3,6 +3,7 @@
 #include "standart_6x8_font.h"
 
 #include <stdio.h>
+#include <stdarg.h>
 
 static struct {
     const uint8_t *glyphs;
@@ -62,6 +63,19 @@ void Console::print(const char *text) {
             break;
         }
     }
+}
+
+int Console::printf(const char *format, ...) {
+    va_list args;
+    va_start (args, format);
+
+    char tmp[256];
+    tmp[sizeof(tmp) - 1] = 0;
+    int c = vsnprintf(tmp, sizeof(tmp) - 1, format, args);
+    print(tmp);
+
+    va_end (args);
+    return c;
 }
 
 void Console::printLine(const char *text) {
