@@ -9,6 +9,7 @@ target_sources(drivers INTERFACE
         ${CMAKE_CURRENT_LIST_DIR}/led/pwm_led.cpp
         ${CMAKE_CURRENT_LIST_DIR}/led/rgb_led.cpp
         ${CMAKE_CURRENT_LIST_DIR}/knob/ec11.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/pwm/Tone.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ws2812/PioData.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ws2812/Single.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ws2812/Circle12.cpp
