@@ -1,6 +1,6 @@
-set(NAME "example--morze")
+set(NAME "example--melody")
 add_executable(${NAME}
-        morze.cpp
+        melody.cpp
         )
 
 pico_enable_stdio_usb(${NAME} 1)

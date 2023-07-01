@@ -32,12 +32,6 @@ uint32_t Tone::freq(uint32_t frequency) {
     return (uint32_t) maxFreq / divider;
 }
 
-void Tone::on() {
-    pwm_set_enabled(sliceNum, true);
+void Tone::set(bool isOn) {
+    pwm_set_enabled(sliceNum, isOn);
 }
-
-void Tone::off() {
-    pwm_set_enabled(sliceNum, false);
-}
-
-
