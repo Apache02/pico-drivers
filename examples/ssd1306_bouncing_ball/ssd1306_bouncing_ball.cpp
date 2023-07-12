@@ -6,14 +6,15 @@
 #include "drivers/led/led.h"
 #include "drivers/ssd1306/Ssd1306.h"
 #include "drivers/gui/Gui.h"
+#include "drivers/fonts/fonts.h"
 
 // board config
 #define LED_PIN PICO_DEFAULT_LED_PIN
 #if defined(DISPLAY_SPI)
-#define DISPLAY_SPI_SDA 11
-#define DISPLAY_SPI_SCL 10
-#define DISPLAY_SPI_CS 9
-#define DISPLAY_SPI_DC 12
+#define DISPLAY_SPI_SDA 15
+#define DISPLAY_SPI_SCL 14
+#define DISPLAY_SPI_CS 17
+#define DISPLAY_SPI_DC 16
 #define DISPLAY_SPI_RES 13
 #define DISPLAY_WIDTH 128
 #define DISPLAY_HEIGHT 64
@@ -43,6 +44,14 @@ void startup_test() {
     printf("%s DONE\n", __FUNCTION__);
 }
 
+unsigned int get_fps() {
+    static uint64_t prevUs = 0;
+    uint64_t currUs = time_us_64();
+    unsigned int fps = prevUs ? 1000000 / (currUs - prevUs) : 0;
+    prevUs = currUs;
+    return fps;
+}
+
 int main() {
     bi_decl(bi_program_description("This is a lib-drivers-example binary."));
     bi_decl(bi_1pin_with_name(LED_PIN, "On-board LED"));
@@ -56,9 +65,10 @@ int main() {
     Gui gui(display.buffer, display.width, display.height);
 
     gui.fill(0);
+    gui.setFont(&font_5x8);
     display.update();
 
-    uint8_t ballR = 2;
+    uint8_t ballR = 3;
     Gui::Point ball = {int16_t(rand() & 0x3f), int16_t(rand() & 0x3f)};
     if (ball.x < ballR) ball.x += ballR;
     if (ball.x > display.width - ballR) ball.x -= ballR;
@@ -72,7 +82,7 @@ int main() {
         bool hit = false;
 
         gui.fill(0);
-        gui.drawRect(0, 0, display.width-1, display.height-1);
+        gui.drawRect(0, 0, display.width - 1, display.height - 1);
 
         ball.x += dir_x;
         ball.y += dir_y;
@@ -83,11 +93,22 @@ int main() {
             ball.x += dir_x;
         }
 
-        if ((ball.y - ballR <= 0) || (ball.y + ballR >= display.height -1 )) {
+        if ((ball.y - ballR <= 0) || (ball.y + ballR >= display.height - 1)) {
             hit = true;
             dir_y *= -1;
             ball.y += dir_y;
         }
+
+        int fps = get_fps();
+        char fpsBuffer[32];
+        sprintf(fpsBuffer, "fps: %d", fps);
+        gui.drawText(
+                fpsBuffer,
+                {1, 1, static_cast<int16_t>(display.width - 2), static_cast<int16_t>(display.height - 2)},
+                0,
+                0,
+                Gui::TOP | Gui::RIGHT
+        );
 
         gui.fillCircle(ball, ballR);
         display.update();

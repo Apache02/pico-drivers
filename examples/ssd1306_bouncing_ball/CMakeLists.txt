@@ -7,8 +7,8 @@ pico_enable_stdio_usb(${NAME} 1)
 pico_enable_stdio_uart(${NAME} 0)
 
 add_compile_definitions(
-#        DISPLAY_SPI
-        DISPLAY_I2C
+        DISPLAY_SPI
+#        DISPLAY_I2C
 )
 
 pico_add_extra_outputs(${NAME})
