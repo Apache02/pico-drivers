@@ -1,15 +1,5 @@
 #include "io.h"
 
-spi_inst_t *Ssd1680_IO::detect_instance(uint sda_pin, uint scl_pin) {
-    if (sda_pin > 7 && scl_pin > 7 && sda_pin < 16 && scl_pin < 16) {
-        return spi1;
-    }
-    if ((sda_pin <= 7 || sda_pin >= 16) && (scl_pin <= 7 || scl_pin >= 16)) {
-        return spi0;
-    }
-    return nullptr;
-}
-
 void Ssd1680_IO::init_io(uint baudrate) {
     spi_set_format(instance, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
     spi_init(instance, baudrate);

@@ -3,6 +3,7 @@
 
 #include "pico/stdlib.h"
 #include "hardware/spi.h"
+#include "../common/detect_spi_instance.h"
 
 
 class Ssd1680_IO {
@@ -14,8 +15,6 @@ private:
     uint reset;
     uint busy;
     spi_inst_t *instance;
-
-    spi_inst_t *detect_instance(uint sda, uint scl);
 
     void init_io(uint baudrate);
 
@@ -29,7 +28,7 @@ public:
             uint busy = -1,
             uint baudrate = 1'000'000
     ) : sda(sda), scl(scl), cs(cs), dc(dc), reset(reset), busy(busy) {
-        instance = detect_instance(sda, scl);
+        instance = detect_spi_instance(sda, scl);
         init_io(baudrate);
     }
 
