@@ -69,7 +69,7 @@ int main() {
             for (auto index = 1; index <= 12; index++, i++) {
                 auto color_mod = rgb_brightness(color, (float) index * index / (12 * 12 * 2));
                 circle.setPixel(index - 1, color_mod);
-                circle.show(12 - ((i >> 3) % 12));
+                circle.show(12 - ((i >> 3) % (12 - 1)));
                 sleep_ms(25);
             }
         }

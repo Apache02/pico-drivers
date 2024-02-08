@@ -22,7 +22,7 @@ const char message[] = "Morse code is a method used in telecommunication to enco
                        "called dots and dashes, or dits and dahs. Morse code is named after "
                        "Samuel Morse, one of the inventors of the telegraph.";
 
-std::map<const char, const char *> morzeMap = {
+const std::map<const char, const char *> morzeMap = {
         {'a', ".-"},
         {'b', "-..."},
         {'w', ".--"},
