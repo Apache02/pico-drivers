@@ -1,14 +1,17 @@
 #include <stdio.h>
+#include <math.h>
+#include <string.h>
 #include "pico/stdlib.h"
 #include "pico/time.h"
+#include "hardware/interp.h"
 #include "pico/binary_info.h"
 #include "drivers/led/led.h"
 #include "drivers/st7789/io.h"
 #include "drivers/st7789/St7789.h"
 
-#include <math.h>
-#include "hardware/interp.h"
 #include "raspberry_256x256_rgb565.h"
+#include "FpsMeasure.h"
+
 
 // board config
 #define LED_PIN PICO_DEFAULT_LED_PIN
@@ -45,8 +48,19 @@ int main() {
     startup_test();
 
     printf("start %s\n", __FUNCTION__);
+    printf("image size %d\n", sizeof(raspberry_256x256));
 
+    // 1 line buffer
     uint16_t buffer[display.width];
+#ifdef COPY_IMAGE_TO_RAM
+    uint16_t *image_ram = new uint16_t[sizeof(raspberry_256x256) / sizeof(uint16_t)];
+    memcpy(image_ram, raspberry_256x256, sizeof(raspberry_256x256));
+    const uint16_t *image = image_ram;
+#else
+    const uint16_t * image = (const uint16_t *) &raspberry_256x256[0];
+#endif
+
+    FpsMeasure fps;
 
 #define UNIT_LSB 16
 #define LOG_IMAGE_SIZE 8
@@ -61,11 +75,14 @@ int main() {
 
     interp_set_config(interp0, 0, &lane0_cfg);
     interp_set_config(interp0, 1, &lane1_cfg);
-    interp0->base[2] = (uint32_t) raspberry_256x256;
+    interp0->base[2] = (uint32_t) image;
 
     float theta = 0.f;
     float theta_max = 2.f * (float) M_PI;
     float theta_step = theta_max / 360;
+
+    fps.reset();
+    uint64_t fpsShowCd = time_us_64() + 1000000;
     for (;;) {
         theta += theta_step;
         if (theta > theta_max) {
@@ -79,13 +96,21 @@ int main() {
         };
         interp0->base[0] = rotate[0];
         interp0->base[1] = rotate[2];
-        for (int y = 0; y < 320; ++y) {
+        for (int y = 0; y < display.height; ++y) {
             interp0->accum[0] = rotate[1] * y;
             interp0->accum[1] = rotate[3] * y;
             for (int x = 0; x < display.width; ++x) {
                 buffer[x] = *(uint16_t *) (interp0->pop[2]);
             }
+
+            // send 1 line to display
             display.draw(0, y, display.width - 1, y, buffer, count_of(buffer));
+        }
+
+        fps.frame();
+        if (time_us_64() > fpsShowCd) {
+            printf("fps: %d\n", fps.getFps());
+            fpsShowCd = time_us_64() + 1000000;
         }
     }
 
