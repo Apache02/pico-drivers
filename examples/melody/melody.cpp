@@ -69,7 +69,7 @@ void play_melody(const Note *notes, size_t length, uint tempo = 120) {
 }
 
 int main() {
-    bi_decl(bi_program_description("This is a lib-drivers-example binary."));
+    bi_decl(bi_program_description("This is a pico-drivers-example binary."));
     bi_decl(bi_1pin_with_name(LED_PIN, "On-board LED"));
 
     stdio_init_all();
