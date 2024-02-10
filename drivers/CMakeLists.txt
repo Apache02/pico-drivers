@@ -20,6 +20,8 @@ target_sources(drivers INTERFACE
         ${CMAKE_CURRENT_LIST_DIR}/ssd1306/Ssd1306.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ssd1680/io.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ssd1680/Ssd1680.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/st7789/io.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/st7789/St7789.cpp
         )
 
 target_link_libraries(drivers INTERFACE
