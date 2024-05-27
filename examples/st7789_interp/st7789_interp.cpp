@@ -5,9 +5,9 @@
 #include "pico/time.h"
 #include "hardware/interp.h"
 #include "pico/binary_info.h"
-#include "drivers/led/led.h"
+#include "drivers/led.h"
 #include "drivers/st7789/io.h"
-#include "drivers/st7789/St7789.h"
+#include "drivers/st7789/display.h"
 
 #include "raspberry_256x256_rgb565.h"
 #include "FpsMeasure.h"
@@ -26,8 +26,8 @@
 
 // global variables
 LED led(LED_PIN);
-St7789_SPI io(DISPLAY_SPI_SDA, DISPLAY_SPI_SCL, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
-St7789 display(&io, DISPLAY_SPI_WIDTH, DISPLAY_SPI_HEIGHT);
+st7789::SPI io(DISPLAY_SPI_SDA, DISPLAY_SPI_SCL, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
+st7789::Display display(&io, DISPLAY_SPI_WIDTH, DISPLAY_SPI_HEIGHT);
 
 
 void startup_test() {

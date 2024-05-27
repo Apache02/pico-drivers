@@ -1,6 +1,6 @@
-#include "io.h"
+#include "drivers/st7789/io.h"
 
-void St7789_SPI::init_io(uint baudrate) {
+void st7789::SPI::init_io(uint baudrate) {
     if (reset != -1) {
         gpio_init(reset);
         gpio_set_dir(reset, GPIO_OUT);
@@ -26,7 +26,7 @@ void St7789_SPI::init_io(uint baudrate) {
     }
 }
 
-void St7789_SPI::command(uint8_t reg, const uint8_t *data, size_t length) {
+void st7789::SPI::command(uint8_t reg, const uint8_t *data, size_t length) {
     use_mode8();
 
     gpio_put(dc, 0);
@@ -41,7 +41,7 @@ void St7789_SPI::command(uint8_t reg, const uint8_t *data, size_t length) {
     gpio_put(cs, 1);
 }
 
-void St7789_SPI::command(uint8_t reg, const uint16_t *data, size_t length) {
+void st7789::SPI::command(uint8_t reg, const uint16_t *data, size_t length) {
     use_mode8();
 
     gpio_put(dc, 0);
@@ -57,7 +57,7 @@ void St7789_SPI::command(uint8_t reg, const uint16_t *data, size_t length) {
     gpio_put(cs, 1);
 }
 
-void St7789_SPI::write(const uint16_t *data, size_t length) {
+void st7789::SPI::write(const uint16_t *data, size_t length) {
     use_mode16();
 
     gpio_put(dc, 1);

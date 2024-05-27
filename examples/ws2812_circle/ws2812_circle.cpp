@@ -2,12 +2,12 @@
 #include "pico/stdlib.h"
 #include "pico/time.h"
 #include "pico/binary_info.h"
-#include "drivers/led/led.h"
-#include "drivers/ws2812/Circle12.h"
+#include "drivers/led.h"
+#include "drivers/Circle12.h"
 
 // board config
-#define LED_PIN PICO_DEFAULT_LED_PIN
-#define WS2812_DATA_PIN 0
+#define LED_PIN             PICO_DEFAULT_LED_PIN
+#define WS2812_DATA_PIN     0
 
 // global variables
 LED led(LED_PIN);

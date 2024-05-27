@@ -1,4 +1,4 @@
-#include "ec11.h"
+#include "drivers/ec11.h"
 #include <stdio.h>
 #include "hardware/gpio.h"
 

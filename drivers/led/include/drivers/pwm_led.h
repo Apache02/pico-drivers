@@ -14,6 +14,8 @@ private:
     void update_pwm();
 
 public:
+    static const uint8_t MAX_VALUE = UINT8_MAX;
+
     PwmLED(uint pin, bool inverted = false) : pin(pin), inverted(inverted) {
         gpio_init(pin);
         gpio_set_function(pin, GPIO_FUNC_PWM);
@@ -32,7 +34,7 @@ public:
     void set(uint8_t level);
 
     inline void on() {
-        set(UINT8_MAX);
+        set(MAX_VALUE);
     };
 
     inline void off() {

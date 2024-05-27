@@ -2,7 +2,7 @@
 #define LIB_DRIVERS_GUI__H
 
 #include "pico/stdlib.h"
-#include "../fonts/font_def.h"
+#include "drivers/font_def.h"
 
 
 class Gui {

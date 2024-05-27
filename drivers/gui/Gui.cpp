@@ -1,4 +1,4 @@
-#include "Gui.h"
+#include "drivers/Gui.h"
 #include <string.h>
 
 #define BUFFER_SIZE(w, h) (w * ((h + 0b111) >> 3))

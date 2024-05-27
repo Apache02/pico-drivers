@@ -3,8 +3,8 @@
 #include "pico/time.h"
 #include "pico/binary_info.h"
 
-#include "drivers/led/led.h"
-#include "drivers/pwm/Tone.h"
+#include "drivers/led.h"
+#include "drivers/Tone.h"
 
 #include "melody.h"
 #include "mario_bros.h"

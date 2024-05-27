@@ -1,4 +1,4 @@
-#include "detect_spi_instance.h"
+#include "drivers/detect_spi_instance.h"
 
 // pin           bits     spi
 // --------------------------

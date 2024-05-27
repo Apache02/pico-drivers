@@ -1,4 +1,4 @@
-#include "rgb_led.h"
+#include "drivers/rgb_led.h"
 #include <math.h>
 
 #define GAMMA_CORRECTION

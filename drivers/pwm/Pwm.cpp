@@ -1,9 +1,7 @@
-#include "Pwm.h"
+#include "drivers/Pwm.h"
 #include "hardware/gpio.h"
 #include "hardware/pwm.h"
 #include "hardware/clocks.h"
-
-#define WRAP_VALUE 8192
 
 void Pwm::init_io() {
     gpio_init(pin);

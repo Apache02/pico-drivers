@@ -1,6 +1,6 @@
-#include "io.h"
+#include "drivers/ssd1680/io.h"
 
-void Ssd1680_IO::init_io(uint baudrate) {
+void ssd1680::SPI::init_io(uint baudrate) {
     spi_set_format(instance, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
     spi_init(instance, baudrate);
 
@@ -32,20 +32,20 @@ void Ssd1680_IO::init_io(uint baudrate) {
     wait_busy();
 }
 
-bool Ssd1680_IO::is_busy() {
+bool ssd1680::SPI::is_busy() {
     if (busy == -1) {
         return false;
     }
     return gpio_get(busy);
 }
 
-void Ssd1680_IO::wait_busy() {
+void ssd1680::SPI::wait_busy() {
     while (is_busy()) {
         asm volatile ("nop; nop; nop; nop; nop; nop; nop; nop;");
     }
 }
 
-void Ssd1680_IO::command(uint8_t reg, const uint8_t *data, size_t length) {
+void ssd1680::SPI::command(uint8_t reg, const uint8_t *data, size_t length) {
     gpio_put(dc, 0);
     gpio_put(cs, 0);
     spi_write_blocking(instance, &reg, 1);

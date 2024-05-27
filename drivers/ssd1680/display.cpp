@@ -1,4 +1,4 @@
-#include "Ssd1680.h"
+#include "drivers/ssd1680/display.h"
 #include <initializer_list>
 #include <stdio.h>
 
@@ -35,7 +35,7 @@ struct command_t {
     std::initializer_list<uint8_t> data;
 };
 
-void Ssd1680::init() {
+void ssd1680::Display::init() {
     io->wait_busy();
     io->command(reg::SWRESET);
     io->wait_busy();
@@ -68,7 +68,7 @@ void Ssd1680::init() {
     buffer_color = new uint8_t[bufferSize];
 }
 
-Ssd1680::~Ssd1680() {
+ssd1680::Display::~Display() {
     if (buffer_mono) {
         delete buffer_mono;
         buffer_mono = nullptr;
@@ -79,7 +79,7 @@ Ssd1680::~Ssd1680() {
     }
 }
 
-void Ssd1680::update() {
+void ssd1680::Display::update() {
     if (!buffer_mono && !buffer_color) {
         return;
     }

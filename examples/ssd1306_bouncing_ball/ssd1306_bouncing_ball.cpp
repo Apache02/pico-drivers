@@ -3,10 +3,10 @@
 #include "pico/stdlib.h"
 #include "pico/time.h"
 #include "pico/binary_info.h"
-#include "drivers/led/led.h"
-#include "drivers/ssd1306/Ssd1306.h"
-#include "drivers/gui/Gui.h"
-#include "drivers/fonts/fonts.h"
+#include "drivers/led.h"
+#include "drivers/ssd1306/display.h"
+#include "drivers/Gui.h"
+#include "drivers/fonts.h"
 
 // board config
 #define LED_PIN PICO_DEFAULT_LED_PIN
@@ -18,7 +18,7 @@
 #define DISPLAY_SPI_RES 13
 #define DISPLAY_WIDTH 128
 #define DISPLAY_HEIGHT 64
-DeviceIO_SPI io(DISPLAY_SPI_SDA, DISPLAY_SPI_SCL, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
+ssd1306::SPI io(DISPLAY_SPI_SDA, DISPLAY_SPI_SCL, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
 #elif defined(DISPLAY_I2C)
 #define DISPLAY_I2C_SDA 14
 #define DISPLAY_I2C_SCL 15
@@ -32,7 +32,7 @@ DeviceIO_I2C io(DISPLAY_I2C_SDA, DISPLAY_I2C_SCL, DISPLAY_I2C_ADDRESS);
 
 // global variables
 LED led(LED_PIN);
-Ssd1306 display(&io, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+ssd1306::Display display(&io, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 
 
 void startup_test() {

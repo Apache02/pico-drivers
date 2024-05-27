@@ -3,9 +3,9 @@
 #include "pico/stdlib.h"
 #include "pico/time.h"
 #include "pico/binary_info.h"
-#include "drivers/led/led.h"
-#include "drivers/ssd1306/Ssd1306.h"
-#include "drivers/console/Console.h"
+#include "drivers/led.h"
+#include "drivers/ssd1306/display.h"
+#include "drivers/Console.h"
 
 // board config
 #define LED_PIN PICO_DEFAULT_LED_PIN
@@ -19,8 +19,8 @@
 #define DISPLAY_SPI_WIDTH 128
 #define DISPLAY_SPI_HEIGHT 64
 
-DeviceIO_SPI io1(DISPLAY_SPI_SDA, DISPLAY_SPI_SCL, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
-Ssd1306 display_spi(&io1, DISPLAY_SPI_WIDTH, DISPLAY_SPI_HEIGHT);
+ssd1306::SPI io1(DISPLAY_SPI_SDA, DISPLAY_SPI_SCL, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
+ssd1306::Display display_spi(&io1, DISPLAY_SPI_WIDTH, DISPLAY_SPI_HEIGHT);
 #endif
 
 #if defined(DISPLAY_I2C)
@@ -30,8 +30,8 @@ Ssd1306 display_spi(&io1, DISPLAY_SPI_WIDTH, DISPLAY_SPI_HEIGHT);
 #define DISPLAY_I2C_WIDTH 128
 #define DISPLAY_I2C_HEIGHT 32
 
-DeviceIO_I2C io2(DISPLAY_I2C_SDA, DISPLAY_I2C_SCL, DISPLAY_I2C_ADDRESS);
-Ssd1306 display_i2c(&io2, DISPLAY_I2C_WIDTH, DISPLAY_I2C_HEIGHT);
+ssd1306::I2C io2(DISPLAY_I2C_SDA, DISPLAY_I2C_SCL, DISPLAY_I2C_ADDRESS);
+ssd1306::Display display_i2c(&io2, DISPLAY_I2C_WIDTH, DISPLAY_I2C_HEIGHT);
 #endif
 
 
@@ -76,7 +76,7 @@ int main() {
 #endif
 
     struct DisplayAndConsole {
-        Ssd1306 *display;
+        ssd1306::Display *display;
         Console *console;
     } displays[] = {
 #if defined(DISPLAY_SPI)

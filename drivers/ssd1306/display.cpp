@@ -1,4 +1,4 @@
-#include "Ssd1306.h"
+#include "drivers/ssd1306/display.h"
 
 enum cmd {
     // Fundamental commands
@@ -54,7 +54,7 @@ enum cmd {
                                  // Byte2 = 0x14: Enable charge pump.
 };
 
-void Ssd1306::init() {
+void ssd1306::Display::init() {
     const uint8_t x1 = 0, x2 = width - 1;
     const uint8_t p1 = 0, p2 = (height / 8) - 1;
     const uint8_t y1 = 0, y2 = height - 1;
@@ -86,19 +86,17 @@ void Ssd1306::init() {
     buffer = new uint8_t[bufferSize];
 }
 
-Ssd1306::~Ssd1306() {
-    if (buffer) {
-        delete buffer;
-        buffer = nullptr;
-    }
+ssd1306::Display::Display(DeviceIO *io, uint8_t width, uint8_t height) : io(io), width(width), height(height) {}
+
+ssd1306::Display::~Display() {
+    if (!buffer) return;
+
+    delete buffer;
+    buffer = nullptr;
 }
 
-Ssd1306::Ssd1306(DeviceIO *io, uint8_t width, uint8_t height) : io(io), width(width), height(height) {}
-
-void Ssd1306::update() {
-    if (!buffer) {
-        return;
-    }
+void ssd1306::Display::update() {
+    if (!buffer) return;
 
     io->write(buffer, bufferSize);
 }

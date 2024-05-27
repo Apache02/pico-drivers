@@ -2,8 +2,8 @@
 #include "pico/stdlib.h"
 #include "pico/time.h"
 #include "pico/binary_info.h"
-#include "drivers/led/pwm_led.h"
-#include "drivers/knob/ec11.h"
+#include "drivers/pwm_led.h"
+#include "drivers/ec11.h"
 
 // board config
 #define LED_PIN PICO_DEFAULT_LED_PIN

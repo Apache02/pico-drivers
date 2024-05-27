@@ -1,4 +1,4 @@
-#include "St7789.h"
+#include "drivers/st7789/display.h"
 
 #define FILL_BUFFER_SIZE 32
 
@@ -50,7 +50,7 @@ enum reg {
     GMCTRN1 = 0xE1,
 };
 
-void St7789::internal_init() {
+void st7789::Display::internal_init() {
 
     io->command(reg::SWRESET);
     sleep_ms(100);
@@ -81,17 +81,17 @@ void St7789::internal_init() {
     sleep_ms(100);
 }
 
-St7789::~St7789() {
+st7789::Display::~Display() {
 }
 
-void St7789::working_area(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2) {
+void st7789::Display::working_area(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2) {
     uint16_t CASET_data[] = {x1, x2};
     uint16_t RASET_data[] = {y1, y2};
     io->command(reg::CASET, CASET_data, 2); // X
     io->command(reg::RASET, RASET_data, 2); // Y
 }
 
-void St7789::fill(uint16_t color) {
+void st7789::Display::fill(uint16_t color) {
     const size_t length = FILL_BUFFER_SIZE;
     uint16_t buffer[length];
     uint16_t *ptr = buffer;
@@ -113,12 +113,12 @@ void St7789::fill(uint16_t color) {
     }
 }
 
-void St7789::pixel(uint16_t x, uint16_t y, uint16_t color) {
+void st7789::Display::pixel(uint16_t x, uint16_t y, uint16_t color) {
     working_area(x, y, x, y);
     io->command(reg::RAMWR, &color, 1);
 }
 
-void St7789::draw(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, const uint16_t *buffer, size_t length) {
+void st7789::Display::draw(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, const uint16_t *buffer, size_t length) {
     working_area(x1, y1, x2, y2);
     io->command(reg::RAMWR, buffer, length);
 }

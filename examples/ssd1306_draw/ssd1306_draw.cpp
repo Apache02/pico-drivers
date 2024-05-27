@@ -3,10 +3,10 @@
 #include "pico/stdlib.h"
 #include "pico/time.h"
 #include "pico/binary_info.h"
-#include "drivers/led/led.h"
-#include "drivers/ssd1306/Ssd1306.h"
-#include "drivers/gui/Gui.h"
-#include "drivers/fonts/fonts.h"
+#include "drivers/led.h"
+#include "drivers/ssd1306/display.h"
+#include "drivers/Gui.h"
+#include "drivers/fonts.h"
 
 // board config
 #define LED_PIN PICO_DEFAULT_LED_PIN
@@ -20,8 +20,8 @@
 #define DISPLAY_SPI_WIDTH 128
 #define DISPLAY_SPI_HEIGHT 64
 
-DeviceIO_SPI io1(DISPLAY_SPI_SDA, DISPLAY_SPI_SCL, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
-Ssd1306 display_spi(&io1, DISPLAY_SPI_WIDTH, DISPLAY_SPI_HEIGHT);
+ssd1306::SPI io1(DISPLAY_SPI_SDA, DISPLAY_SPI_SCL, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
+ssd1306::Display display_spi(&io1, DISPLAY_SPI_WIDTH, DISPLAY_SPI_HEIGHT);
 #endif
 
 #if defined(DISPLAY_I2C)
@@ -31,8 +31,8 @@ Ssd1306 display_spi(&io1, DISPLAY_SPI_WIDTH, DISPLAY_SPI_HEIGHT);
 #define DISPLAY_I2C_WIDTH 128
 #define DISPLAY_I2C_HEIGHT 32
 
-DeviceIO_I2C io2(DISPLAY_I2C_SDA, DISPLAY_I2C_SCL, DISPLAY_I2C_ADDRESS);
-Ssd1306 display_i2c(&io2, DISPLAY_I2C_WIDTH, DISPLAY_I2C_HEIGHT);
+ssd1306::I2C io2(DISPLAY_I2C_SDA, DISPLAY_I2C_SCL, DISPLAY_I2C_ADDRESS);
+ssd1306::Display display_i2c(&io2, DISPLAY_I2C_WIDTH, DISPLAY_I2C_HEIGHT);
 #endif
 
 
@@ -48,7 +48,7 @@ void startup_test() {
     printf("%s DONE\n", __FUNCTION__);
 }
 
-void test_drawCircles(Ssd1306 *d, Gui *gui) {
+void test_drawCircles(ssd1306::Display *d, Gui *gui) {
     printf("%s START\n", __PRETTY_FUNCTION__);
     gui->fill(0);
     for (auto i = 0; i < 10; i++) {
@@ -65,7 +65,7 @@ void test_drawCircles(Ssd1306 *d, Gui *gui) {
     printf("%s END\n", __PRETTY_FUNCTION__);
 }
 
-void test_drawLines(Ssd1306 *d, Gui *gui) {
+void test_drawLines(ssd1306::Display *d, Gui *gui) {
     printf("%s START\n", __PRETTY_FUNCTION__);
     gui->fill(0);
     for (auto i = 0; i < 10; i++) {
@@ -78,7 +78,7 @@ void test_drawLines(Ssd1306 *d, Gui *gui) {
     printf("%s END\n", __PRETTY_FUNCTION__);
 }
 
-void test_drawRects(Ssd1306 *d, Gui *gui) {
+void test_drawRects(ssd1306::Display *d, Gui *gui) {
     printf("%s START\n", __PRETTY_FUNCTION__);
     gui->fill(0);
     for (auto i = 0; i < 10; i++) {
@@ -97,7 +97,7 @@ void test_drawRects(Ssd1306 *d, Gui *gui) {
     printf("%s END\n", __PRETTY_FUNCTION__);
 }
 
-void test_drawGlyphs(Ssd1306 *d, Gui *gui, const FONT_DEF *font, const char *fontName = nullptr) {
+void test_drawGlyphs(ssd1306::Display *d, Gui *gui, const FONT_DEF *font, const char *fontName = nullptr) {
     printf("%s START\n", __PRETTY_FUNCTION__);
     gui->setFont(font);
 
@@ -137,7 +137,7 @@ void test_drawGlyphs(Ssd1306 *d, Gui *gui, const FONT_DEF *font, const char *fon
     printf("%s END\n", __PRETTY_FUNCTION__);
 }
 
-void test_drawText(Ssd1306 *d, Gui *gui, const FONT_DEF *font) {
+void test_drawText(ssd1306::Display *d, Gui *gui, const FONT_DEF *font) {
     printf("%s START\n", __PRETTY_FUNCTION__);
     gui->fill(0);
     gui->setFont(font);
@@ -202,7 +202,7 @@ int main() {
 #endif
 
     struct _DISPLAYS {
-        Ssd1306 *display;
+        ssd1306::Display *display;
         Gui *gui;
     } displays[] = {
 #if defined(DISPLAY_SPI)
@@ -217,13 +217,13 @@ int main() {
         const FONT_DEF *ptr;
         const char *name;
     } fonts[] = {
-//            {&font_5x8, "font_5x8"},
+//            {&font_5x8,       "font_5x8"},
             {&font_6x8_basic, "font_6x8_basic"},
-            {&font_6x8, "font_6x8"},
-            {&font_6x10, "font_6x10"},
-//            {&font_10x16, "font_10x16"},
-            {&font_12x16, "font_12x16"},
-//            {&font_12x20, "font_12x20"},
+            {&font_6x8,       "font_6x8"},
+            {&font_6x10,      "font_6x10"},
+//            {&font_10x16,     "font_10x16"},
+            {&font_12x16,     "font_12x16"},
+//            {&font_12x20,     "font_12x20"},
     };
 
     for (;;) {

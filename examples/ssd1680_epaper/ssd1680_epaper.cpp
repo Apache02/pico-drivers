@@ -4,10 +4,10 @@
 #include "pico/stdlib.h"
 #include "pico/time.h"
 #include "pico/binary_info.h"
-#include "drivers/led/led.h"
-#include "drivers/ssd1680/Ssd1680.h"
-#include "drivers/gui/Gui.h"
-#include "drivers/fonts/fonts.h"
+#include "drivers/led.h"
+#include "drivers/ssd1680/display.h"
+#include "drivers/Gui.h"
+#include "drivers/fonts.h"
 
 // board config
 #define LED_PIN PICO_DEFAULT_LED_PIN
@@ -23,8 +23,8 @@
 #define DISPLAY_SPI_HEIGHT 122
 
 LED led(LED_PIN);
-Ssd1680_IO io(DISPLAY_SPI_SDA, DISPLAY_SPI_SCL, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES, DISPLAY_SPI_BUSY);
-Ssd1680 display(&io, DISPLAY_SPI_WIDTH, DISPLAY_SPI_HEIGHT);
+ssd1680::SPI io(DISPLAY_SPI_SDA, DISPLAY_SPI_SCL, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES, DISPLAY_SPI_BUSY);
+ssd1680::Display display(&io, DISPLAY_SPI_WIDTH, DISPLAY_SPI_HEIGHT);
 
 
 void startup_test() {

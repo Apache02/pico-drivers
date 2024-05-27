@@ -5,8 +5,8 @@
 #include <map>
 #include <string>
 
-#include "drivers/led/led.h"
-#include "drivers/pwm/Tone.h"
+#include "drivers/led.h"
+#include "drivers/Tone.h"
 
 // board config
 #define LED_PIN PICO_DEFAULT_LED_PIN
