@@ -16,8 +16,8 @@
 // board config
 #define LED_PIN PICO_DEFAULT_LED_PIN
 
-#define DISPLAY_SPI_SDA 14
-#define DISPLAY_SPI_SCL 15
+#define DISPLAY_SPI_SDA 15
+#define DISPLAY_SPI_SCL 14
 #define DISPLAY_SPI_CS 13
 #define DISPLAY_SPI_DC 12
 #define DISPLAY_SPI_RES 11
