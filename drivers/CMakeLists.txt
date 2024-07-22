@@ -6,6 +6,7 @@ add_subdirectory(knob)
 add_subdirectory(ssd1306)
 add_subdirectory(ssd1680)
 add_subdirectory(st7789)
+add_subdirectory(lcd)
 
 add_subdirectory(console)
 add_subdirectory(gui)
