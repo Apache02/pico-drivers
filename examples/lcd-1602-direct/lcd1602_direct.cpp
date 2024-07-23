@@ -65,6 +65,7 @@ int main() {
 
     while (1) {
         for (int m = 0; m < sizeof(message) / sizeof(message[0]); m += 2) {
+            lcd.clear();
             for (int line = 0; line < 2; line++) {
                 lcd.position(line, (16 / 2) - strlen(message[m + line]) / 2);
                 const char *s = message[m + line];
@@ -77,11 +78,12 @@ int main() {
                     s++;
                 }
             }
+
             sleep_ms(2000);
-            lcd.clear();
         }
 
         for (int i=0; i<256;) {
+            lcd.clear();
             for (int line=0; line < 2; line++) {
                 lcd.position(line, 0);
                 for (int j=0; j<16; j++, i++) {
