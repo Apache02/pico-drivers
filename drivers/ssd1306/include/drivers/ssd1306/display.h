@@ -14,13 +14,13 @@ namespace ssd1306 {
         const uint8_t height;
         uint8_t *buffer = nullptr;
         size_t bufferSize = 0;
-        DeviceIO *io;
+        DeviceIO &io;
 
     private:
 
     public:
 
-        Display(DeviceIO *io, uint8_t width, uint8_t height);
+        Display(DeviceIO &io, uint8_t width, uint8_t height);
 
         ~Display();
 

@@ -80,13 +80,13 @@ void ssd1306::Display::init() {
             SET_PAGE_ADDRESS, p1, p2,           // Set page start and end address.
             SET_DISP_ON_OFF | 0x01,             // Display on.
     };
-    io->commands(commands, sizeof(commands));
+    io.commands(commands, sizeof(commands));
 
     bufferSize = (width * height / 8);
     buffer = new uint8_t[bufferSize];
 }
 
-ssd1306::Display::Display(DeviceIO *io, uint8_t width, uint8_t height) : io(io), width(width), height(height) {}
+ssd1306::Display::Display(DeviceIO &io, uint8_t width, uint8_t height) : io(io), width(width), height(height) {}
 
 ssd1306::Display::~Display() {
     if (!buffer) return;
@@ -98,5 +98,5 @@ ssd1306::Display::~Display() {
 void ssd1306::Display::update() {
     if (!buffer) return;
 
-    io->write(buffer, bufferSize);
+    io.write(buffer, bufferSize);
 }

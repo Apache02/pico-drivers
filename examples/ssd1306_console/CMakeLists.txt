@@ -8,7 +8,7 @@ pico_enable_stdio_usb(${NAME} 1)
 pico_enable_stdio_uart(${NAME} 0)
 
 add_compile_definitions(
-        #DISPLAY_SPI
+        DISPLAY_SPI
         DISPLAY_I2C
 )
 
@@ -18,6 +18,7 @@ target_link_libraries(
         ${NAME}
         pico_stdlib
         drivers_led
+        drivers_io
         drivers_console
         drivers_ssd1306
 )

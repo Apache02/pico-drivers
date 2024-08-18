@@ -3,9 +3,9 @@
 
 #include <stdlib.h>
 #include "pico/stdlib.h"
-#include "hardware/gpio.h"
-#include "hardware/i2c.h"
-#include "hardware/spi.h"
+#include "drivers/I2C.h"
+#include "drivers/SPI.h"
+
 
 namespace ssd1306 {
 
@@ -21,37 +21,13 @@ namespace ssd1306 {
 
     class I2C : public DeviceIO {
     private:
-        uint sda;
-        uint scl;
-        i2c_inst_t *instance;
+        IO::I2C &iic;
         uint8_t address;
-
-        i2c_inst_t *detect_instance(uint sda, uint scl);
-
-        void init_io(uint baudrate);
 
         void chunked_write(const uint8_t control_byte, const uint8_t *data, const size_t length);
 
     public:
-        I2C(
-                uint sda,
-                uint scl,
-                i2c_inst_t *instance,
-                uint8_t address,
-                uint baudrate = 400000
-        ) : sda(sda), scl(scl), instance(instance), address(address) {
-            init_io(baudrate);
-        }
-
-        I2C(
-                uint sda,
-                uint scl,
-                uint8_t address,
-                uint baudrate = 400000
-        ) : sda(sda), scl(scl), address(address) {
-            instance = detect_instance(sda, scl);
-            init_io(baudrate);
-        }
+        I2C(IO::I2C &iic, uint8_t address) : iic(iic), address(address) {};
 
         void command(const uint8_t command) override;
 
@@ -63,31 +39,13 @@ namespace ssd1306 {
 
     class SPI : public DeviceIO {
     private:
-        uint sda; // mosi
-        uint scl;
-        uint cs;
+        IO::SPI &spi;
+
         uint dc;
-        uint reset;
-        spi_inst_t *instance;
-
-        spi_inst_t *detect_instance(uint sda, uint scl);
-
-        void init_io(uint baudrate);
-
-        void write_internal(const uint8_t *data, const size_t length, bool is_data);
 
     public:
-        SPI(
-                uint sda,
-                uint scl,
-                uint cs,
-                uint dc,
-                uint reset,
-                uint baudrate = 10 * 1024 * 1024
-        ) : sda(sda), scl(scl), cs(cs), dc(dc), reset(reset) {
-            instance = detect_instance(sda, scl);
-            init_io(baudrate);
-        }
+        SPI(IO::SPI &spi, uint dc, uint reset);
+
 
         void command(const uint8_t command) override;
 

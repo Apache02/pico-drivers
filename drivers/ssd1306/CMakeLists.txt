@@ -14,6 +14,5 @@ target_include_directories(
 target_link_libraries(
         drivers_ssd1306 INTERFACE
         pico_stdlib
-        hardware_i2c
-        hardware_spi
+        drivers_io
 )

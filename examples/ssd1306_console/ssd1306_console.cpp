@@ -7,8 +7,12 @@
 #include "drivers/ssd1306/display.h"
 #include "drivers/Console.h"
 
+#include "drivers/I2C.h"
+#include "drivers/SPI.h"
+
 // board config
 #define LED_PIN PICO_DEFAULT_LED_PIN
+
 
 #if defined(DISPLAY_SPI)
 #define DISPLAY_SPI_SDA 11
@@ -19,8 +23,10 @@
 #define DISPLAY_SPI_WIDTH 128
 #define DISPLAY_SPI_HEIGHT 64
 
-ssd1306::SPI io1(DISPLAY_SPI_SDA, DISPLAY_SPI_SCL, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
-ssd1306::Display display_spi(&io1, DISPLAY_SPI_WIDTH, DISPLAY_SPI_HEIGHT);
+IO::SPI spi(DISPLAY_SPI_SDA, -1, DISPLAY_SPI_SCL, DISPLAY_SPI_CS);
+
+ssd1306::SPI display_io1(spi, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
+ssd1306::Display display_spi(display_io1, DISPLAY_SPI_WIDTH, DISPLAY_SPI_HEIGHT);
 #endif
 
 #if defined(DISPLAY_I2C)
@@ -30,8 +36,10 @@ ssd1306::Display display_spi(&io1, DISPLAY_SPI_WIDTH, DISPLAY_SPI_HEIGHT);
 #define DISPLAY_I2C_WIDTH 128
 #define DISPLAY_I2C_HEIGHT 32
 
-ssd1306::I2C io2(DISPLAY_I2C_SDA, DISPLAY_I2C_SCL, DISPLAY_I2C_ADDRESS);
-ssd1306::Display display_i2c(&io2, DISPLAY_I2C_WIDTH, DISPLAY_I2C_HEIGHT);
+IO::I2C iic(DISPLAY_I2C_SDA, DISPLAY_I2C_SCL);
+
+ssd1306::I2C display_io2(iic, DISPLAY_I2C_ADDRESS);
+ssd1306::Display display_i2c(display_io2, DISPLAY_I2C_WIDTH, DISPLAY_I2C_HEIGHT);
 #endif
 
 
@@ -53,11 +61,21 @@ void startup_test() {
     printf("%s DONE\n", __FUNCTION__);
 }
 
+void hardware_init() {
+#if defined(DISPLAY_SPI)
+    spi.init(10 * 1024 * 1024);
+#endif
+#if defined(DISPLAY_I2C)
+    iic.init(400000);
+#endif
+}
+
 int main() {
     bi_decl(bi_program_description("This is a pico-drivers-example binary."));
     bi_decl(bi_1pin_with_name(LED_PIN, "On-board LED"));
 
     stdio_init_all();
+    hardware_init();
 
     startup_test();
     srand(time_us_32());
