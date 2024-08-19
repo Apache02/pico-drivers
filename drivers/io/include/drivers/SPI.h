@@ -5,18 +5,15 @@
 
 
 namespace IO {
-    class SPI {
-    private:
-        uint cs;
-        uint miso;
-        uint mosi;
+    const uint SPI_BAUDRATE_MAX = 62.5 * 1'000'000;
 
+    class SPI {
     public:
         spi_inst_t *instance;
 
-        SPI(spi_inst_t *instance) : instance(instance) {};
+        SPI(spi_inst_t *instance);
 
-        SPI(uint mosi, uint miso, uint scl, uint cs);
+        SPI(uint mosi, uint miso, uint scl);
 
         void init(uint baudrate);
 

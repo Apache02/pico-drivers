@@ -17,17 +17,12 @@ static spi_inst_t *detect_instance(uint rx_or_tx1, uint rx_or_tx2, uint scl) {
     return 0b1000 & scl ? spi1 : spi0;
 }
 
-IO::SPI::SPI(uint mosi, uint miso, uint scl, uint cs)
-        : cs(cs), miso(miso), mosi(mosi) {
+IO::SPI::SPI(spi_inst_t *instance) : instance(instance) {}
+
+IO::SPI::SPI(uint mosi, uint miso, uint scl) {
 
     instance = detect_instance(mosi, miso, scl);
     invalid_params_if(SPI, instance == nullptr);
-
-    if (cs != -1) {
-        gpio_init(cs);
-        gpio_set_dir(cs, GPIO_OUT);
-        gpio_put(cs, 1);
-    }
 
     gpio_set_function(scl, GPIO_FUNC_SPI);
     if (mosi != -1) gpio_set_function(mosi, GPIO_FUNC_SPI);
@@ -39,10 +34,6 @@ void IO::SPI::init(uint baudrate) {
 }
 
 int IO::SPI::write(const uint8_t *src, size_t len) {
-    gpio_put(cs, 0);
-    int ret = spi_write_blocking(instance, src, len);
-    gpio_put(cs, 1);
-
-    return ret;
+    return spi_write_blocking(instance, src, len);
 }
 

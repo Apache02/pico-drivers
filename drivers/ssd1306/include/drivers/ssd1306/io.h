@@ -41,10 +41,13 @@ namespace ssd1306 {
     private:
         IO::SPI &spi;
 
+        uint cs;
         uint dc;
 
+        void internal_write(const uint8_t *data, size_t length, bool is_data);
+
     public:
-        SPI(IO::SPI &spi, uint dc, uint reset);
+        SPI(IO::SPI &spi, uint cs, uint dc, uint reset);
 
 
         void command(const uint8_t command) override;

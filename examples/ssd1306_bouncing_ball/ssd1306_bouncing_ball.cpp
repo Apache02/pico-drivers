@@ -11,28 +11,34 @@
 // board config
 #define LED_PIN PICO_DEFAULT_LED_PIN
 #if defined(DISPLAY_SPI)
-#define DISPLAY_SPI_SDA 15
-#define DISPLAY_SPI_SCL 14
+#define DISPLAY_SPI_SDA 19
+#define DISPLAY_SPI_SCL 18
 #define DISPLAY_SPI_CS 17
 #define DISPLAY_SPI_DC 16
-#define DISPLAY_SPI_RES 13
+#define DISPLAY_SPI_RES 22
 #define DISPLAY_WIDTH 128
 #define DISPLAY_HEIGHT 64
-ssd1306::SPI io(DISPLAY_SPI_SDA, DISPLAY_SPI_SCL, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
+
+IO::SPI spi(DISPLAY_SPI_SDA, -1, DISPLAY_SPI_SCL);
+ssd1306::SPI display_io(spi, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
+
 #elif defined(DISPLAY_I2C)
-#define DISPLAY_I2C_SDA 14
-#define DISPLAY_I2C_SCL 15
+#define DISPLAY_I2C_SDA 20
+#define DISPLAY_I2C_SCL 21
 #define DISPLAY_I2C_ADDRESS SSD1306_DEFAULT_I2C_ADDRESS
 #define DISPLAY_WIDTH 128
 #define DISPLAY_HEIGHT 32
-ssd1306::I2C io(DISPLAY_I2C_SDA, DISPLAY_I2C_SCL, DISPLAY_I2C_ADDRESS);
+
+IO::I2C iic(DISPLAY_I2C_SDA, DISPLAY_I2C_SCL);
+ssd1306::I2C display_io(iic, DISPLAY_I2C_ADDRESS);
+
 #else
 #error "required definition of DISPLAY_SPI or DISPLAY_I2C"
 #endif
 
 // global variables
 LED led(LED_PIN);
-ssd1306::Display display(&io, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+ssd1306::Display display(display_io, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 
 
 void startup_test() {
@@ -52,11 +58,20 @@ unsigned int get_fps() {
     return fps;
 }
 
+void hardware_init() {
+#if defined(DISPLAY_SPI)
+    spi.init(IO::SPI_BAUDRATE_MAX);
+#elif defined(DISPLAY_I2C)
+    iic.init(1.3 * 1'000'000);
+#endif
+}
+
 int main() {
     bi_decl(bi_program_description("This is a pico-drivers-example binary."));
     bi_decl(bi_1pin_with_name(LED_PIN, "On-board LED"));
 
     stdio_init_all();
+    hardware_init();
 
     startup_test();
     display.init();
@@ -107,7 +122,7 @@ int main() {
                 {1, 1, static_cast<int16_t>(display.width - 2), static_cast<int16_t>(display.height - 2)},
                 0,
                 0,
-                Gui::TOP | Gui::RIGHT
+                Gui::MIDDLE | Gui::CENTER
         );
 
         gui.fillCircle(ball, ballR);

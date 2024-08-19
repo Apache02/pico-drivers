@@ -1,5 +1,6 @@
 #include "drivers/ssd1306/io.h"
 #include <string.h>
+#include "hardware/gpio.h"
 
 
 #define CHUNK_SIZE 64
@@ -33,7 +34,15 @@ void ssd1306::I2C::chunked_write(const uint8_t control_byte, const uint8_t *data
 }
 
 
-ssd1306::SPI::SPI(IO::SPI &spi, uint dc, uint reset) : spi(spi), dc(dc) {
+ssd1306::SPI::SPI(IO::SPI &spi, uint cs, uint dc, uint reset) : spi(spi), cs(cs), dc(dc) {
+    invalid_params_if(SPI, dc == -1);
+
+    if (cs != -1) {
+        gpio_init(cs);
+        gpio_set_dir(cs, GPIO_OUT);
+        gpio_put(cs, 1);
+    }
+
     gpio_init(dc);
     gpio_set_dir(dc, GPIO_OUT);
     gpio_put(dc, 0);
@@ -51,16 +60,21 @@ ssd1306::SPI::SPI(IO::SPI &spi, uint dc, uint reset) : spi(spi), dc(dc) {
 }
 
 void ssd1306::SPI::command(const uint8_t command) {
-    gpio_put(dc, 0);
-    spi.write(&command, 1);
+    internal_write(&command, 1, false);
 }
 
 void ssd1306::SPI::commands(const uint8_t *commands, size_t length) {
-    gpio_put(dc, 0);
-    spi.write(commands, length);
+    internal_write(commands, length, false);
 }
 
 void ssd1306::SPI::write(const uint8_t *data, size_t length) {
-    gpio_put(dc, 1);
+    internal_write(data, length, true);
+}
+
+void ssd1306::SPI::internal_write(const uint8_t *data, size_t length, bool is_data) {
+    gpio_put(dc, is_data);
+
+    if (cs != -1) gpio_put(cs, 0);
     spi.write(data, length);
+    if (cs != -1) gpio_put(cs, 1);
 }
