@@ -23,6 +23,7 @@
 
 IO::SPI spi(DISPLAY_SPI_SDA, -1, DISPLAY_SPI_SCL);
 ssd1306::SPI display_io(spi, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
+const char connection_type[] = "SPI";
 
 #elif defined(DISPLAY_I2C) || defined(DISPLAY_PIO_I2C)
 
@@ -31,11 +32,14 @@ ssd1306::SPI display_io(spi, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
 
 #if defined(DISPLAY_I2C) && !defined(DISPLAY_PIO_I2C)
 IO::I2C iic(DISPLAY_I2C_SDA, DISPLAY_I2C_SCL);
+const char connection_type[] = "I2C";
 #elif defined(DISPLAY_PIO_I2C) && !defined(DISPLAY_I2C)
 
 #include "drivers/PioI2C.h"
 
 IO::PioI2C iic(pio0, DISPLAY_I2C_SDA, DISPLAY_I2C_SCL);
+
+const char connection_type[] = "PIO I2C";
 #endif
 
 #define DISPLAY_I2C_ADDRESS SSD1306_DEFAULT_I2C_ADDRESS
@@ -54,17 +58,6 @@ LED led(LED_PIN);
 ssd1306::Display display(display_io, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 
 
-void startup_test() {
-    printf("%s START\n", __FUNCTION__);
-    led.on();
-    sleep_ms(2000);
-    led.off();
-    sleep_ms(10);
-    printf("%s DONE\n", __FUNCTION__);
-
-    printf("clk_sys = %lu Hz\n", clock_get_hz(clk_sys));
-}
-
 unsigned int get_fps() {
     static uint64_t prevUs = 0;
     uint64_t currUs = time_us_64();
@@ -81,8 +74,10 @@ void hardware_init() {
 #elif defined(DISPLAY_I2C)
     iic.init(3.2 * 1'000'000);
 #elif defined(DISPLAY_PIO_I2C)
-    iic.init(66.5 * 1'000'000);
+    iic.init(91 * 1'000'000);
 #endif
+
+    display.init();
 }
 
 int main() {
@@ -91,16 +86,29 @@ int main() {
 
     stdio_init_all();
     hardware_init();
-
-    startup_test();
-    display.init();
-
     srand(time_us_32());
-    Gui gui(display.buffer, display.width, display.height);
 
+    Gui gui(display.buffer, display.width, display.height);
     gui.fill(0);
-    gui.setFont(&font_5x8);
     display.update();
+
+    gui.setFont(&font_12x16);
+
+    gui.drawText(
+            connection_type,
+            {0, 0, static_cast<int16_t>(display.width), static_cast<int16_t>(display.height)},
+            0, 0,
+            Gui::MIDDLE | Gui::CENTER
+    );
+    display.update();
+
+    led.on();
+    sleep_ms(2000);
+    led.off();
+
+    printf("clk_sys = %lu Hz\n", clock_get_hz(clk_sys));
+
+    gui.setFont(&font_5x8);
 
     uint8_t ballR = 3;
     Gui::Point ball = {int16_t(get_rand_32() & (display.width - 1)), int16_t(get_rand_32() & (display.height - 1))};
