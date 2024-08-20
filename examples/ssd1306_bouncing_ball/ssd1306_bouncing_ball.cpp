@@ -2,7 +2,9 @@
 #include <string.h>
 #include "pico/stdlib.h"
 #include "pico/time.h"
+#include "pico/rand.h"
 #include "pico/binary_info.h"
+#include "hardware/clocks.h"
 #include "drivers/led.h"
 #include "drivers/ssd1306/display.h"
 #include "drivers/Gui.h"
@@ -22,15 +24,26 @@
 IO::SPI spi(DISPLAY_SPI_SDA, -1, DISPLAY_SPI_SCL);
 ssd1306::SPI display_io(spi, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
 
-#elif defined(DISPLAY_I2C)
+#elif defined(DISPLAY_I2C) || defined(DISPLAY_PIO_I2C)
+
 #define DISPLAY_I2C_SDA 20
 #define DISPLAY_I2C_SCL 21
+
+#if defined(DISPLAY_I2C) && !defined(DISPLAY_PIO_I2C)
+IO::I2C iic(DISPLAY_I2C_SDA, DISPLAY_I2C_SCL);
+#elif defined(DISPLAY_PIO_I2C) && !defined(DISPLAY_I2C)
+
+#include "drivers/PioI2C.h"
+
+IO::PioI2C iic(pio0, DISPLAY_I2C_SDA, DISPLAY_I2C_SCL);
+#endif
+
 #define DISPLAY_I2C_ADDRESS SSD1306_DEFAULT_I2C_ADDRESS
 #define DISPLAY_WIDTH 128
 #define DISPLAY_HEIGHT 32
 
-IO::I2C iic(DISPLAY_I2C_SDA, DISPLAY_I2C_SCL);
 ssd1306::I2C display_io(iic, DISPLAY_I2C_ADDRESS);
+
 
 #else
 #error "required definition of DISPLAY_SPI or DISPLAY_I2C"
@@ -48,6 +61,8 @@ void startup_test() {
     led.off();
     sleep_ms(10);
     printf("%s DONE\n", __FUNCTION__);
+
+    printf("clk_sys = %lu Hz\n", clock_get_hz(clk_sys));
 }
 
 unsigned int get_fps() {
@@ -59,10 +74,14 @@ unsigned int get_fps() {
 }
 
 void hardware_init() {
+    set_sys_clock_khz(240000, false);
+
 #if defined(DISPLAY_SPI)
     spi.init(IO::SPI_BAUDRATE_MAX);
 #elif defined(DISPLAY_I2C)
-    iic.init(1.3 * 1'000'000);
+    iic.init(3.2 * 1'000'000);
+#elif defined(DISPLAY_PIO_I2C)
+    iic.init(66.5 * 1'000'000);
 #endif
 }
 
@@ -84,7 +103,7 @@ int main() {
     display.update();
 
     uint8_t ballR = 3;
-    Gui::Point ball = {int16_t(rand() & 0x3f), int16_t(rand() & 0x3f)};
+    Gui::Point ball = {int16_t(get_rand_32() & (display.width - 1)), int16_t(get_rand_32() & (display.height - 1))};
     if (ball.x < ballR) ball.x += ballR;
     if (ball.x > display.width - ballR) ball.x -= ballR;
     if (ball.y < ballR) ball.y += ballR;

@@ -10,6 +10,7 @@ pico_enable_stdio_uart(${NAME} 0)
 add_compile_definitions(
 #        DISPLAY_SPI
         DISPLAY_I2C
+#        DISPLAY_PIO_I2C
 )
 
 pico_add_extra_outputs(${NAME})
@@ -17,6 +18,7 @@ pico_add_extra_outputs(${NAME})
 target_link_libraries(
         ${NAME}
         pico_stdlib
+        pico_rand
         drivers_led
         drivers_ssd1306
         drivers_gui
