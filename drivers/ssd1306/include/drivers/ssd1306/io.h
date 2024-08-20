@@ -21,13 +21,13 @@ namespace ssd1306 {
 
     class I2C : public DeviceIO {
     private:
-        IO::I2C &iic;
+        IO::AbstractI2C &iic;
         uint8_t address;
 
         void chunked_write(const uint8_t control_byte, const uint8_t *data, const size_t length);
 
     public:
-        I2C(IO::I2C &iic, uint8_t address) : iic(iic), address(address) {};
+        I2C(IO::AbstractI2C &iic, uint8_t address) : iic(iic), address(address) {};
 
         void command(const uint8_t command) override;
 

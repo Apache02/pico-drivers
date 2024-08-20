@@ -5,7 +5,15 @@
 
 
 namespace IO {
-    class I2C {
+    class AbstractI2C {
+    public:
+        virtual void init(uint baudrate) = 0;
+
+        virtual int write(uint8_t addr, const uint8_t *src, size_t len, bool nostop) = 0;
+    };
+
+
+    class I2C : public AbstractI2C {
     public:
         i2c_inst_t *instance;
 
@@ -13,9 +21,9 @@ namespace IO {
 
         I2C(uint sda, uint scl);
 
-        void init(uint baudrate);
+        void init(uint baudrate) override;
 
-        int write(uint8_t addr, const uint8_t *src, size_t len, bool nostop);
+        int write(uint8_t addr, const uint8_t *src, size_t len, bool nostop) override;
     };
 }
 
