@@ -19,3 +19,6 @@ int IO::I2C::write(uint8_t addr, const uint8_t *src, size_t len, bool nostop) {
     return i2c_write_blocking(instance, addr, src, len, nostop);
 }
 
+int IO::I2C::read(uint8_t addr, uint8_t *src, size_t len, bool nostop) {
+    return i2c_read_blocking(instance, addr, src, len, nostop);
+}

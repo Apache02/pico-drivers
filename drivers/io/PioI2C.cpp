@@ -15,3 +15,7 @@ void IO::PioI2C::init(uint baudrate) {
 int IO::PioI2C::write(uint8_t addr, const uint8_t *src, size_t len, bool nostop) {
     return pio_i2c_write_blocking(pio, sm, addr, src, len);
 }
+
+int IO::PioI2C::read(uint8_t addr, uint8_t *src, size_t len, bool nostop) {
+    return pio_i2c_read_blocking(pio, sm, addr, src, len);
+}

@@ -20,6 +20,8 @@ namespace IO {
         void init(uint baudrate) override;
 
         int write(uint8_t addr, const uint8_t *src, size_t len, bool nostop) override;
+
+        int read(uint8_t addr, uint8_t *src, size_t len, bool nostop) override;
     };
 }
 

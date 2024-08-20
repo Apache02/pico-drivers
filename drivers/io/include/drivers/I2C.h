@@ -10,6 +10,8 @@ namespace IO {
         virtual void init(uint baudrate) = 0;
 
         virtual int write(uint8_t addr, const uint8_t *src, size_t len, bool nostop) = 0;
+
+        virtual int read(uint8_t addr, uint8_t *src, size_t len, bool nostop) = 0;
     };
 
 
@@ -24,6 +26,8 @@ namespace IO {
         void init(uint baudrate) override;
 
         int write(uint8_t addr, const uint8_t *src, size_t len, bool nostop) override;
+
+        int read(uint8_t addr, uint8_t *src, size_t len, bool nostop) override;
     };
 }
 
