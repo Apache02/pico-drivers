@@ -2,7 +2,6 @@ set(NAME "example--st7789_interp")
 add_executable(
         ${NAME}
         st7789_interp.cpp
-        FpsMeasure.cpp
 )
 
 pico_enable_stdio_usb(${NAME} 1)

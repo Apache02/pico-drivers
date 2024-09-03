@@ -10,17 +10,16 @@
 #include "drivers/st7789/display.h"
 
 #include "raspberry_256x256_rgb565.h"
-#include "FpsMeasure.h"
 
 
 // board config
 #define LED_PIN PICO_DEFAULT_LED_PIN
 
-#define DISPLAY_SPI_SDA 15
-#define DISPLAY_SPI_SCL 14
-#define DISPLAY_SPI_CS 13
-#define DISPLAY_SPI_DC 12
-#define DISPLAY_SPI_RES 11
+#define DISPLAY_SPI_SDA 19
+#define DISPLAY_SPI_SCL 18
+#define DISPLAY_SPI_CS 17
+#define DISPLAY_SPI_DC 16
+#define DISPLAY_SPI_RES 22
 #define DISPLAY_SPI_WIDTH 240
 #define DISPLAY_SPI_HEIGHT 320
 
@@ -37,6 +36,19 @@ void startup_test() {
     led.off();
     sleep_ms(10);
     printf("%s DONE\n", __FUNCTION__);
+}
+
+unsigned int get_fps() {
+    static uint64_t prevUs = 0;
+    uint64_t currUs = time_us_64();
+    unsigned int fps;
+    if (!prevUs) {
+        fps = 0;
+    } else {
+        fps = 1'000'000 / (currUs - prevUs);
+    }
+    prevUs = currUs;
+    return fps;
 }
 
 int main() {
@@ -60,8 +72,6 @@ int main() {
     const uint16_t * image = (const uint16_t *) &raspberry_256x256[0];
 #endif
 
-    FpsMeasure fps;
-
 #define UNIT_LSB 16
 #define LOG_IMAGE_SIZE 8
     interp_config lane0_cfg = interp_default_config();
@@ -81,7 +91,6 @@ int main() {
     float theta_max = 2.f * (float) M_PI;
     float theta_step = theta_max / 360;
 
-    fps.reset();
     uint64_t fpsShowCd = time_us_64() + 1000000;
     for (;;) {
         theta += theta_step;
@@ -107,9 +116,9 @@ int main() {
             display.draw(0, y, display.width - 1, y, buffer, count_of(buffer));
         }
 
-        fps.frame();
+        auto fps = get_fps();
         if (time_us_64() > fpsShowCd) {
-            printf("fps: %d\n", fps.getFps());
+            printf("fps: %d\n", fps);
             fpsShowCd = time_us_64() + 1000000;
         }
     }
