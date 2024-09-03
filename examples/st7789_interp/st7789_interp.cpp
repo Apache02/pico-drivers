@@ -15,13 +15,15 @@
 // board config
 #define LED_PIN PICO_DEFAULT_LED_PIN
 
-#define DISPLAY_SPI_SDA 19
-#define DISPLAY_SPI_SCL 18
-#define DISPLAY_SPI_CS 17
-#define DISPLAY_SPI_DC 16
-#define DISPLAY_SPI_RES 22
-#define DISPLAY_SPI_WIDTH 240
-#define DISPLAY_SPI_HEIGHT 320
+#define DISPLAY_SPI_SDA          19
+#define DISPLAY_SPI_SCL          18
+#define DISPLAY_SPI_CS           17
+#define DISPLAY_SPI_DC           16
+#define DISPLAY_SPI_RES          22
+#define DISPLAY_SPI_WIDTH        240
+#define DISPLAY_SPI_HEIGHT       320
+
+#define BUFFER_ROWS_COUNT        64
 
 // global variables
 LED led(LED_PIN);
@@ -62,8 +64,9 @@ int main() {
     printf("start %s\n", __FUNCTION__);
     printf("image size %d\n", sizeof(raspberry_256x256));
 
-    // 1 line buffer
-    uint16_t buffer[display.width];
+    // lines buffer
+    auto buffer = new uint16_t[BUFFER_ROWS_COUNT][DISPLAY_SPI_WIDTH];
+
 #ifdef COPY_IMAGE_TO_RAM
     uint16_t *image_ram = new uint16_t[sizeof(raspberry_256x256) / sizeof(uint16_t)];
     memcpy(image_ram, raspberry_256x256, sizeof(raspberry_256x256));
@@ -105,15 +108,20 @@ int main() {
         };
         interp0->base[0] = rotate[0];
         interp0->base[1] = rotate[2];
-        for (int y = 0; y < display.height; ++y) {
-            interp0->accum[0] = rotate[1] * y;
-            interp0->accum[1] = rotate[3] * y;
-            for (int x = 0; x < display.width; ++x) {
-                buffer[x] = *(uint16_t *) (interp0->pop[2]);
+
+        int by;
+
+        for (int y = 0; y < display.height; y += by) {
+            for (by = 0; by < BUFFER_ROWS_COUNT; ++by) {
+                interp0->accum[0] = rotate[1] * (y + by);
+                interp0->accum[1] = rotate[3] * (y + by);
+                for (int x = 0; x < display.width; ++x) {
+                    buffer[by][x] = *(uint16_t *) (interp0->pop[2]);
+                }
             }
 
-            // send 1 line to display
-            display.draw(0, y, display.width - 1, y, buffer, count_of(buffer));
+            // send lines to display
+            display.draw(0, y, display.width - 1, y + by - 1, &buffer[0][0], by * display.width);
         }
 
         auto fps = get_fps();
