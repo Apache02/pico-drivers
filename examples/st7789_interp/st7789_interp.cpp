@@ -23,13 +23,17 @@
 #define DISPLAY_SPI_WIDTH        240
 #define DISPLAY_SPI_HEIGHT       320
 
-#define BUFFER_ROWS_COUNT        64
+#define BUFFER_ROWS_COUNT        32
 
 // global variables
 LED led(LED_PIN);
 st7789::SPI io(DISPLAY_SPI_SDA, DISPLAY_SPI_SCL, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
 st7789::Display display(&io, DISPLAY_SPI_WIDTH, DISPLAY_SPI_HEIGHT);
 
+
+typedef struct {
+    uint16_t pixels[BUFFER_ROWS_COUNT][DISPLAY_SPI_WIDTH];
+} pixels_buffer_t;
 
 void startup_test() {
     printf("%s START\n", __FUNCTION__);
@@ -63,9 +67,13 @@ int main() {
 
     printf("start %s\n", __FUNCTION__);
     printf("image size %d\n", sizeof(raspberry_256x256));
+    printf("buffer size: %d / %d rows\n", sizeof(pixels_buffer_t), BUFFER_ROWS_COUNT);
 
-    // lines buffer
-    auto buffer = new uint16_t[BUFFER_ROWS_COUNT][DISPLAY_SPI_WIDTH];
+    // partial display buffers
+    pixels_buffer_t *buffers[2] = {
+            new pixels_buffer_t,
+            new pixels_buffer_t,
+    };
 
 #ifdef COPY_IMAGE_TO_RAM
     uint16_t *image_ram = new uint16_t[sizeof(raspberry_256x256) / sizeof(uint16_t)];
@@ -95,7 +103,9 @@ int main() {
     float theta_step = theta_max / 360;
 
     uint64_t fpsShowCd = time_us_64() + 1000000;
-    for (;;) {
+    for (unsigned int bi = 0;; bi = (bi + 1) & 1) {
+        pixels_buffer_t *buffer = buffers[bi];
+
         theta += theta_step;
         if (theta > theta_max) {
             theta -= theta_max;
@@ -116,12 +126,12 @@ int main() {
                 interp0->accum[0] = rotate[1] * (y + by);
                 interp0->accum[1] = rotate[3] * (y + by);
                 for (int x = 0; x < display.width; ++x) {
-                    buffer[by][x] = *(uint16_t *) (interp0->pop[2]);
+                    buffer->pixels[by][x] = *(uint16_t *) (interp0->pop[2]);
                 }
             }
 
             // send lines to display
-            display.draw(0, y, display.width - 1, y + by - 1, &buffer[0][0], by * display.width);
+            display.draw(0, y, display.width - 1, y + by - 1, &buffer->pixels[0][0], by * display.width);
         }
 
         auto fps = get_fps();
