@@ -1,17 +1,15 @@
 #include "drivers/st7789/io.h"
 
-void st7789::SPI::init_io(uint baudrate) {
+st7789::SPI::SPI(IO::SPI &spi, uint cs, uint dc, uint reset) : spi(spi), cs(cs), dc(dc), reset(reset) {
+    init_io();
+}
+
+void st7789::SPI::init_io() {
     if (reset != -1) {
         gpio_init(reset);
         gpio_set_dir(reset, GPIO_OUT);
         gpio_put(reset, 0);
     }
-
-    spi_init(instance, baudrate);
-    spi_set_format(instance, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
-    mode16 = false;
-    gpio_set_function(sda, GPIO_FUNC_SPI);
-    gpio_set_function(scl, GPIO_FUNC_SPI);
 
     gpio_init(cs);
     gpio_set_dir(cs, GPIO_OUT);
@@ -26,42 +24,38 @@ void st7789::SPI::init_io(uint baudrate) {
     }
 }
 
-void st7789::SPI::command(uint8_t reg, const uint8_t *data, size_t length) {
-    use_mode8();
-
+void st7789::SPI::command(uint8_t reg) {
     gpio_put(dc, 0);
     gpio_put(cs, 0);
-    spi_write_blocking(instance, &reg, 1);
+    spi.write(&reg, 1);
+    gpio_put(cs, 1);
+}
 
-    if (data) {
-        gpio_put(dc, 1);
-        spi_write_blocking(instance, data, length);
-    }
+void st7789::SPI::command(uint8_t reg, const uint8_t *data, size_t length) {
+    gpio_put(dc, 0);
+    gpio_put(cs, 0);
+    spi.write(&reg, 1);
+
+    gpio_put(dc, 1);
+    spi.write(data, length);
 
     gpio_put(cs, 1);
 }
 
 void st7789::SPI::command(uint8_t reg, const uint16_t *data, size_t length) {
-    use_mode8();
-
     gpio_put(dc, 0);
     gpio_put(cs, 0);
-    spi_write_blocking(instance, &reg, 1);
+    spi.write(&reg, 1);
 
-    if (data) {
-        gpio_put(dc, 1);
-        use_mode16();
-        spi_write16_blocking(instance, data, length);
-    }
+    gpio_put(dc, 1);
+    spi.write(data, length);
 
     gpio_put(cs, 1);
 }
 
 void st7789::SPI::write(const uint16_t *data, size_t length) {
-    use_mode16();
-
     gpio_put(dc, 1);
     gpio_put(cs, 0);
-    spi_write16_blocking(instance, data, length);
+    spi.write(data, length);
     gpio_put(cs, 1);
 }

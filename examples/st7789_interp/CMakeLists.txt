@@ -15,6 +15,7 @@ target_link_libraries(
         ${NAME}
         pico_stdlib
         drivers_led
+        drivers_io
         drivers_st7789
         hardware_interp
 )

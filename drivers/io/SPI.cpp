@@ -29,11 +29,32 @@ IO::SPI::SPI(uint mosi, uint miso, uint scl) {
     if (miso != -1) gpio_set_function(miso, GPIO_FUNC_SPI);
 }
 
+void IO::SPI::use_mode16() {
+    if (!mode16) {
+        spi_set_format(instance, 16, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
+        mode16 = true;
+    }
+}
+
+void IO::SPI::use_mode8() {
+    if (mode16) {
+        spi_set_format(instance, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
+        mode16 = false;
+    }
+}
+
 void IO::SPI::init(uint baudrate) {
     spi_init(instance, baudrate);
+    spi_set_format(instance, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
+    mode16 = false;
 }
 
-int IO::SPI::write(const uint8_t *src, size_t len) {
-    return spi_write_blocking(instance, src, len);
+int IO::SPI::write(const uint8_t *data, size_t len) {
+    use_mode8();
+    return spi_write_blocking(instance, data, len);
 }
 
+int IO::SPI::write(const uint16_t *data, size_t len) {
+    use_mode16();
+    return spi_write16_blocking(instance, data, len);
+}

@@ -6,6 +6,7 @@
 #include "hardware/interp.h"
 #include "pico/binary_info.h"
 #include "drivers/led.h"
+#include "drivers/SPI.h"
 #include "drivers/st7789/io.h"
 #include "drivers/st7789/display.h"
 
@@ -27,8 +28,9 @@
 
 // global variables
 LED led(LED_PIN);
-st7789::SPI io(DISPLAY_SPI_SDA, DISPLAY_SPI_SCL, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
-st7789::Display display(&io, DISPLAY_SPI_WIDTH, DISPLAY_SPI_HEIGHT);
+IO::SPI spi(DISPLAY_SPI_SDA, -1, DISPLAY_SPI_SCL);
+st7789::SPI display_io(spi, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
+st7789::Display display(&display_io, DISPLAY_SPI_WIDTH, DISPLAY_SPI_HEIGHT);
 
 
 typedef struct {
@@ -62,6 +64,8 @@ int main() {
     bi_decl(bi_1pin_with_name(LED_PIN, "On-board LED"));
 
     stdio_init_all();
+    spi.init(IO::SPI_BAUDRATE_MAX);
+    display.init();
 
     startup_test();
 

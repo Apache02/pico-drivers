@@ -12,17 +12,15 @@ namespace st7789 {
         SPI *io;
 
     private:
-        void internal_init();
-
         void working_area(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
 
     public:
 
-        Display(SPI *io, uint16_t width, uint16_t height) : io(io), width(width), height(height) {
-            internal_init();
-        }
+        Display(SPI *io, uint16_t width, uint16_t height);
 
         ~Display();
+
+        void init();
 
         void fill(uint16_t color);
 

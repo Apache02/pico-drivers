@@ -16,4 +16,5 @@ target_link_libraries(
         pico_stdlib
         hardware_spi
         drivers_common
+        drivers_io
 )

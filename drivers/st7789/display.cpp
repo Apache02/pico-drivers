@@ -50,7 +50,13 @@ enum reg {
     GMCTRN1 = 0xE1,
 };
 
-void st7789::Display::internal_init() {
+st7789::Display::Display(st7789::SPI *io, uint16_t width, uint16_t height) : io(io), width(width), height(height) {
+}
+
+st7789::Display::~Display() {
+}
+
+void st7789::Display::init() {
 
     io->command(reg::SWRESET);
     sleep_ms(100);
@@ -79,9 +85,6 @@ void st7789::Display::internal_init() {
     io->command(reg::DISPON);  // turn display on
 
     sleep_ms(100);
-}
-
-st7789::Display::~Display() {
 }
 
 void st7789::Display::working_area(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2) {

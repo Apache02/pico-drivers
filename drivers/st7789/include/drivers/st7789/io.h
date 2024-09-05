@@ -3,6 +3,7 @@
 
 #include "pico/stdlib.h"
 #include "hardware/spi.h"
+#include "drivers/SPI.h"
 #include "drivers/detect_spi_instance.h"
 
 #ifndef ST7789_SPI_BAUD
@@ -13,45 +14,19 @@ namespace st7789 {
 
     class SPI {
     private:
-        uint sda; // mosi
-        uint scl;
+        IO::SPI &spi;
         uint cs;
         uint dc;
         uint reset;
-        spi_inst_t *instance;
 
-        bool mode16;
-
-        void init_io(uint baudrate);
-
-        void inline use_mode16() {
-            if (!mode16) {
-                spi_set_format(instance, 16, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
-                mode16 = true;
-            }
-        }
-
-        void inline use_mode8() {
-            if (mode16) {
-                spi_set_format(instance, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
-                mode16 = false;
-            }
-        }
+        void init_io();
 
     public:
-        SPI(
-                uint sda,
-                uint scl,
-                uint cs,
-                uint dc,
-                uint reset = -1,
-                uint baudrate = 62'500'000
-        ) : sda(sda), scl(scl), cs(cs), dc(dc), reset(reset) {
-            instance = detect_spi_instance(sda, scl);
-            init_io(baudrate);
-        }
+        SPI(IO::SPI &spi, uint cs, uint dc, uint reset = -1);
 
-        void command(uint8_t reg, const uint8_t *data = nullptr, size_t length = 0);
+        void command(uint8_t reg);
+
+        void command(uint8_t reg, const uint8_t *data, size_t length);
 
         void command(uint8_t reg, const uint16_t *data, size_t length);
 
