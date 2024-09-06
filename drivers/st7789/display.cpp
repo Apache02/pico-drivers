@@ -50,7 +50,7 @@ enum reg {
     GMCTRN1 = 0xE1,
 };
 
-st7789::Display::Display(st7789::SPI *io, uint16_t width, uint16_t height) : io(io), width(width), height(height) {
+st7789::Display::Display(st7789::IO_Spi *io, uint16_t width, uint16_t height) : io(io), width(width), height(height) {
 }
 
 st7789::Display::~Display() {
@@ -90,8 +90,8 @@ void st7789::Display::init() {
 void st7789::Display::working_area(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2) {
     uint16_t CASET_data[] = {x1, x2};
     uint16_t RASET_data[] = {y1, y2};
-    io->command(reg::CASET, CASET_data, 2); // X
-    io->command(reg::RASET, RASET_data, 2); // Y
+    io->command(reg::CASET, CASET_data, count_of(CASET_data)); // X
+    io->command(reg::RASET, RASET_data, count_of(RASET_data)); // Y
 }
 
 void st7789::Display::fill(uint16_t color) {

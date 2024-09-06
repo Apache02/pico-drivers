@@ -31,21 +31,26 @@ IO::SPI::SPI(uint mosi, uint miso, uint scl) {
 
 void IO::SPI::use_mode16() {
     if (!mode16) {
-        spi_set_format(instance, 16, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
+        spi_set_format(instance, 16, format.cpol, format.cpha, format.order);
         mode16 = true;
     }
 }
 
 void IO::SPI::use_mode8() {
     if (mode16) {
-        spi_set_format(instance, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
+        spi_set_format(instance, 8, format.cpol, format.cpha, format.order);
         mode16 = false;
     }
 }
 
-void IO::SPI::init(uint baudrate) {
+void IO::SPI::init(uint baudrate, spi_cpol_t cpol, spi_cpha_t cpha, spi_order_t order) {
+    format = {
+            cpol,
+            cpha,
+            order
+    };
     spi_init(instance, baudrate);
-    spi_set_format(instance, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
+    spi_set_format(instance, 8, format.cpol, format.cpha, format.order);
     mode16 = false;
 }
 

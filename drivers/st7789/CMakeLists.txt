@@ -15,6 +15,7 @@ target_link_libraries(
         drivers_st7789 INTERFACE
         pico_stdlib
         hardware_spi
+        hardware_dma
         drivers_common
         drivers_io
 )

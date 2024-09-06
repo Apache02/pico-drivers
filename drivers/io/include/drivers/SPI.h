@@ -11,10 +11,11 @@ namespace IO {
     class SPI {
     private:
         bool mode16;
-
-        inline void use_mode16();
-
-        inline void use_mode8();
+        struct {
+            spi_cpol_t cpol;
+            spi_cpha_t cpha;
+            spi_order_t order;
+        } format;
 
     public:
         spi_inst_t *instance;
@@ -23,11 +24,15 @@ namespace IO {
 
         SPI(uint mosi, uint miso, uint scl);
 
-        virtual void init(uint baudrate);
+        void init(uint baudrate, spi_cpol_t cpol = SPI_CPOL_0, spi_cpha_t cpha = SPI_CPHA_0, spi_order_t order = SPI_MSB_FIRST);
 
-        virtual int write(const uint8_t *data, size_t len);
+        int write(const uint8_t *data, size_t len);
 
-        virtual int write(const uint16_t *data, size_t len);
+        int write(const uint16_t *data, size_t len);
+
+        void use_mode8();
+
+        void use_mode16();
     };
 }
 

@@ -9,14 +9,14 @@ namespace st7789 {
     public:
         const uint16_t width;
         const uint16_t height;
-        SPI *io;
+        IO_Spi *io;
 
     private:
         void working_area(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
 
     public:
 
-        Display(SPI *io, uint16_t width, uint16_t height);
+        Display(IO_Spi *io, uint16_t width, uint16_t height);
 
         ~Display();
 

@@ -29,7 +29,8 @@
 // global variables
 LED led(LED_PIN);
 IO::SPI spi(DISPLAY_SPI_SDA, -1, DISPLAY_SPI_SCL);
-st7789::SPI display_io(spi, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
+//st7789::IO_Spi display_io(spi, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
+st7789::IO_Spi_Dma display_io(spi, DISPLAY_SPI_CS, DISPLAY_SPI_DC, DISPLAY_SPI_RES);
 st7789::Display display(&display_io, DISPLAY_SPI_WIDTH, DISPLAY_SPI_HEIGHT);
 
 
@@ -65,6 +66,7 @@ int main() {
 
     stdio_init_all();
     spi.init(IO::SPI_BAUDRATE_MAX);
+    display_io.init();
     display.init();
 
     startup_test();
@@ -107,8 +109,7 @@ int main() {
     float theta_step = theta_max / 360;
 
     uint64_t fpsShowCd = time_us_64() + 1000000;
-    for (unsigned int bi = 0;; bi = (bi + 1) & 1) {
-        pixels_buffer_t *buffer = buffers[bi];
+    for (;;) {
 
         theta += theta_step;
         if (theta > theta_max) {
@@ -123,9 +124,10 @@ int main() {
         interp0->base[0] = rotate[0];
         interp0->base[1] = rotate[2];
 
-        int by;
+        unsigned int y, bi, by;
+        for (y = 0, bi = 0; y < display.height; y += by, bi = (bi + 1) & 1) {
+            pixels_buffer_t *buffer = buffers[bi];
 
-        for (int y = 0; y < display.height; y += by) {
             for (by = 0; by < BUFFER_ROWS_COUNT; ++by) {
                 interp0->accum[0] = rotate[1] * (y + by);
                 interp0->accum[1] = rotate[3] * (y + by);
