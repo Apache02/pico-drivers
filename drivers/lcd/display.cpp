@@ -43,35 +43,28 @@
 
 namespace LCD {
     void Display::configure() {
-        io->command(LCD_FUNCTIONSET | LCD_8BITMODE);
-        sleep_us(4500);
-        io->command(LCD_FUNCTIONSET | LCD_8BITMODE);
-        sleep_us(100);
-        io->command(LCD_FUNCTIONSET | LCD_8BITMODE);
-        io->command(LCD_FUNCTIONSET); // 4bits mode
+        io.configure();
 
-        sleep_us(100);
-
-        io->command(LCD_FUNCTIONSET | LCD_8BITMODE | (linesCount == 2 ? LCD_2LINE : 0)); // 8 bit
-        io->command(LCD_DISPLAYCONTROL); // Display OFF
+        io.command(LCD_FUNCTIONSET | (linesCount == 2 ? LCD_2LINE : 0)); // 8 bit
+        io.command(LCD_DISPLAYCONTROL); // Display OFF
         sleep_us(2000);
-        io->command(LCD_CLEARDISPLAY); // Clear display
-        io->command(LCD_ENTRYMODESET | LCD_ENTRYLEFT); // entry mode set
-        io->command(LCD_CURSORSHIFT | LCD_MOVERIGHT);
+        io.command(LCD_CLEARDISPLAY); // Clear display
+        io.command(LCD_ENTRYMODESET | LCD_ENTRYLEFT); // entry mode set
+        io.command(LCD_CURSORSHIFT | LCD_MOVERIGHT);
         sleep_us(2000);
     }
 
     void Display::clear() {
-        io->command(LCD_CLEARDISPLAY);
+        io.command(LCD_CLEARDISPLAY);
         sleep_us(2000);
     }
 
     void Display::position(uint8_t line, uint8_t position) {
-        io->command(LCD_SETDDRAMADDR | position | (line > 0 ? 0x40 : 0));
+        io.command(LCD_SETDDRAMADDR | position | (line > 0 ? 0x40 : 0));
     }
 
     void Display::on(bool cursor = false, bool blink = false) {
-        io->command(
+        io.command(
                 LCD_DISPLAYCONTROL
                 | LCD_DISPLAYON
                 | (cursor ? LCD_CURSORON : 0)
@@ -81,17 +74,17 @@ namespace LCD {
     }
 
     void Display::off() {
-        io->command(LCD_DISPLAYCONTROL);
+        io.command(LCD_DISPLAYCONTROL);
         sleep_us(2000);
     }
 
     void Display::putChar(int c) {
-        io->write(c);
+        io.write(c);
     }
 
     void Display::print(const char *s) {
         while (*s != '\0') {
-            io->write(*s++);
+            io.write(*s++);
         }
     }
 }

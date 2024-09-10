@@ -27,7 +27,8 @@
 LED led(LED_PIN);
 Pwm lcd_contrast(LCD_1602_VO_PIN);
 LCD::Direct lcd_io(LCD_1602_RS_PIN, LCD_1602_ENABLE_PIN, LCD_1602_D0_PIN);
-LCD::Display lcd(&lcd_io, 2, 16);
+//LCD::Direct4Bit lcd_io(LCD_1602_RS_PIN, LCD_1602_ENABLE_PIN, LCD_1602_D4_PIN);
+LCD::Display lcd(lcd_io, 2, 16);
 
 
 void startup_test() {
