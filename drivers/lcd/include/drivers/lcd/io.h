@@ -38,26 +38,26 @@ namespace LCD {
     };
 
 
-//    // 4 bits direct connection
-//    class Direct4Bit : public DeviceIO {
-//    private:
-//        uint rs;
-//        uint en;
-//        uint db4; // d4 pin
-//        uint32_t data_pins_mask;
-//
-//        void put4bits(uint8_t bits);
-//
-//    public:
-//        Direct4Bit(uint rs_pin, uint enable_pin, uint db4_pin);
-//
-//        void configure() override;
-//
-//        void command(uint8_t byte) override;
-//
-//        void write(uint8_t byte) override;
-//
-//    };
+    // 4 bits direct connection
+    class Direct4Bit : public DeviceIO {
+    private:
+        uint rs;
+        uint en;
+        uint db4; // d4 pin
+        uint32_t data_pins_mask;
+
+        void put4bits(uint8_t bits);
+
+    public:
+        Direct4Bit(uint rs_pin, uint enable_pin, uint db4_pin);
+
+        void configure() override;
+
+        void command(uint8_t byte) override;
+
+        void write(uint8_t byte) override;
+
+    };
 }
 
 #endif // DRIVERS_LCD_DEVICE_IO__H
