@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.12)
 
+if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/config.cmake)
+    include(config.cmake)
+endif()
+
 include(pico_sdk_import.cmake)
 include(scripts/functions.cmake)
 

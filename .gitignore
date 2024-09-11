@@ -1,4 +1,7 @@
 .idea
+.env
+
+config.cmake
 
 cmake-build-default
 cmake-build-debug
