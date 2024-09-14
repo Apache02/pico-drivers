@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdio.h>
-#include "drivers/pwm/Tone.h"
+#include "drivers/Tone.h"
 
 typedef struct {
     Tone::NOTE freq;
