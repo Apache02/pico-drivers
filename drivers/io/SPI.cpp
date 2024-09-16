@@ -22,7 +22,7 @@ IO::SPI::SPI(spi_inst_t *instance) : instance(instance) {}
 IO::SPI::SPI(uint mosi, uint miso, uint scl) {
 
     instance = detect_instance(mosi, miso, scl);
-    invalid_params_if(SPI, instance == nullptr);
+    assert(instance != nullptr);
 
     gpio_set_function(scl, GPIO_FUNC_SPI);
     if (mosi != -1) gpio_set_function(mosi, GPIO_FUNC_SPI);

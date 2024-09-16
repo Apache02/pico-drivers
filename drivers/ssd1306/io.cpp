@@ -35,7 +35,7 @@ void ssd1306::I2C::chunked_write(const uint8_t control_byte, const uint8_t *data
 
 
 ssd1306::SPI::SPI(IO::SPI &spi, uint cs, uint dc, uint reset) : spi(spi), cs(cs), dc(dc) {
-    invalid_params_if(SPI, dc == -1);
+    assert(dc != -1);
 
     if (cs != -1) {
         gpio_init(cs);

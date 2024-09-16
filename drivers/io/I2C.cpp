@@ -3,7 +3,7 @@
 
 
 IO::I2C::I2C(uint sda, uint scl) {
-    invalid_params_if(I2C, (sda & 2) != (scl & 2));
+    assert((sda & 2) == (scl & 2));
     instance = i2c_get_instance((sda >> 1) & 1);
 
     gpio_set_function(sda, GPIO_FUNC_I2C);
