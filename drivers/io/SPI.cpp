@@ -20,13 +20,22 @@ static spi_inst_t *detect_instance(uint rx_or_tx1, uint rx_or_tx2, uint scl) {
 IO::SPI::SPI(spi_inst_t *instance) : instance(instance) {}
 
 IO::SPI::SPI(uint mosi, uint miso, uint scl) {
+    assert(scl >= 0);
+    assert(mosi >= 0 || miso >= 0);
 
     instance = detect_instance(mosi, miso, scl);
     assert(instance != nullptr);
 
+    gpio_pull_up(scl);
     gpio_set_function(scl, GPIO_FUNC_SPI);
-    if (mosi != -1) gpio_set_function(mosi, GPIO_FUNC_SPI);
-    if (miso != -1) gpio_set_function(miso, GPIO_FUNC_SPI);
+    if (mosi != -1) {
+        gpio_pull_up(mosi);
+        gpio_set_function(mosi, GPIO_FUNC_SPI);
+    }
+    if (miso != -1) {
+        gpio_pull_up(miso);
+        gpio_set_function(miso, GPIO_FUNC_SPI);
+    }
 }
 
 void IO::SPI::use_mode16() {

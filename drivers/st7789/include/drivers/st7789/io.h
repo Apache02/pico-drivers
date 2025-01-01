@@ -18,14 +18,16 @@ namespace st7789 {
         IO::SPI &spi;
         uint cs;
         uint dc;
-        uint reset;
+        uint reset_pin;
 
     public:
         IO_Spi() = delete;
 
         IO_Spi(IO::SPI &spi, uint cs, uint dc, uint reset = -1);
 
-        void init();
+        void init() const;
+
+        void reset(uint32_t delay_us);
 
         virtual void command(uint8_t reg);
 

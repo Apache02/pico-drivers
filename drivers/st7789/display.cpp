@@ -58,6 +58,7 @@ st7789::Display::~Display() {
 
 void st7789::Display::init() {
 
+    io->reset(1'000);
     io->command(reg::SWRESET);
     sleep_ms(100);
 

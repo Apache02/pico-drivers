@@ -82,7 +82,7 @@ int main() {
     };
 
 #ifdef COPY_IMAGE_TO_RAM
-    uint16_t *image_ram = new uint16_t[sizeof(raspberry_256x256) / sizeof(uint16_t)];
+    auto *image_ram = new uint16_t[sizeof(raspberry_256x256) / sizeof(uint16_t)];
     memcpy(image_ram, raspberry_256x256, sizeof(raspberry_256x256));
     const uint16_t *image = image_ram;
 #else

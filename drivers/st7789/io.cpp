@@ -1,64 +1,71 @@
 #include "drivers/st7789/io.h"
 #include "hardware/spi.h"
-#include <stdio.h>
+//#include <stdio.h>
 
 
-st7789::IO_Spi::IO_Spi(IO::SPI &spi, uint cs, uint dc, uint reset) : spi(spi), cs(cs), dc(dc), reset(reset) {}
+st7789::IO_Spi::IO_Spi(IO::SPI &spi, uint cs, uint dc, uint reset) : spi(spi), cs(cs), dc(dc), reset_pin(reset) {}
 
-void st7789::IO_Spi::init() {
-    if (reset != -1) {
-        gpio_init(reset);
-        gpio_set_dir(reset, GPIO_OUT);
-        gpio_put(reset, 0);
+void st7789::IO_Spi::init() const {
+    if (reset_pin != -1) {
+        gpio_init(reset_pin);
+        gpio_set_dir(reset_pin, GPIO_OUT);
+        gpio_put(reset_pin, false);
     }
 
     gpio_init(cs);
     gpio_set_dir(cs, GPIO_OUT);
-    gpio_put(cs, 1);
+    gpio_put(cs, true);
 
     gpio_init(dc);
     gpio_set_dir(dc, GPIO_OUT);
-    gpio_put(dc, 1);
+    gpio_put(dc, true);
 
-    if (reset != -1) {
-        gpio_put(reset, 1);
+    if (reset_pin != -1) {
+        gpio_put(reset_pin, true);
     }
 }
 
+void st7789::IO_Spi::reset(uint32_t delay_us) {
+    if (reset_pin == -1) return;
+    gpio_put(reset_pin, false);
+    sleep_us(delay_us);
+    gpio_put(reset_pin, true);
+}
+
 void st7789::IO_Spi::command(uint8_t reg) {
-    gpio_put(dc, 0);
-    gpio_put(cs, 0);
+    gpio_put(dc, false);
+    gpio_put(cs, false);
     spi.write(&reg, 1);
-    gpio_put(cs, 1);
+    gpio_put(cs, true);
 }
 
 void st7789::IO_Spi::command(uint8_t reg, const uint8_t *data, size_t length) {
-    gpio_put(dc, 0);
-    gpio_put(cs, 0);
+    gpio_put(dc, false);
+    gpio_put(cs, false);
     spi.write(&reg, 1);
 
-    gpio_put(dc, 1);
+    gpio_put(dc, true);
     spi.write(data, length);
 
-    gpio_put(cs, 1);
+    gpio_put(cs, true);
 }
 
 void st7789::IO_Spi::command(uint8_t reg, const uint16_t *data, size_t length) {
-    gpio_put(dc, 0);
-    gpio_put(cs, 0);
+    gpio_put(dc, false);
+    gpio_put(cs, false);
     spi.write(&reg, 1);
 
-    gpio_put(dc, 1);
+    gpio_put(dc, true);
     spi.write(data, length);
 
-    gpio_put(cs, 1);
+    gpio_put(cs, true);
 }
 
 void st7789::IO_Spi::write(const uint16_t *data, size_t length) {
-    gpio_put(dc, 1);
-    gpio_put(cs, 0);
+    gpio_put(dc, true);
+    gpio_put(cs, false);
     spi.write(data, length);
-    gpio_put(cs, 1);
+    gpio_put(cs, true);
 }
 
 st7789::IO_Spi_Dma::IO_Spi_Dma(IO::SPI &spi, uint cs, uint dc, uint reset) : IO_Spi(spi, cs, dc, reset) {}
@@ -127,11 +134,11 @@ void st7789::IO_Spi_Dma::command(uint8_t reg, const uint16_t *data, size_t lengt
         return;
     }
 
-    gpio_put(dc, 0);
-    gpio_put(cs, 0);
+    gpio_put(dc, false);
+    gpio_put(cs, false);
     spi.write(&reg, 1);
 
-    gpio_put(dc, 1);
+    gpio_put(dc, true);
     spi.use_mode16();
     dma_channel_configure(dma_tx, &config, &spi_get_hw(spi.instance)->dr, data, length, true);
 }
